@@ -19,7 +19,7 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('That username is already in use. Please choose a different username.')
 
     def validate_email(self, email):
-        user = User.query.filter_by(email=email.data).first()
+        user = User.query.filter_by(email=email.data.lower()).first()
         if user:
             raise ValidationError('That email is already in use. Please choose a different email.')
         
@@ -43,7 +43,7 @@ class UpdateAccountForm(FlaskForm):
 
     def validate_email(self, email):
         if email.data != current_user.email:
-            user = User.query.filter_by(email=email.data).first()
+            user = User.query.filter_by(email=email.data.lower()).first()
             if user:
                 raise ValidationError('That email is already in use. Please choose a different email.')
 
@@ -52,7 +52,7 @@ class RequestResetForm(FlaskForm):
     submit = SubmitField('Request Password Reset')
 
     def validate_email(self, email):
-        user = User.query.filter_by(email=email.data).first()
+        user = User.query.filter_by(email=email.data.lower()).first()
         if user is None:
             raise ValidationError('There is no account with that email. Please register first.')
 
