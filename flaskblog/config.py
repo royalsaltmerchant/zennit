@@ -14,3 +14,4 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = 'saltdemotester@gmail.com'
     MAIL_PASSWORD = 'kscdfeafjrkwgnuv'
+    FLASK_APP = 'run.py'
