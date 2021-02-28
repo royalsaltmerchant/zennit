@@ -15,3 +15,4 @@ class Config:
     MAIL_USERNAME = 'saltdemotester@gmail.com'
     MAIL_PASSWORD = 'kscdfeafjrkwgnuv'
     FLASK_APP = 'run.py'
+    DEBUG = True
