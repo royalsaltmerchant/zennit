@@ -12,7 +12,7 @@ login_manager = LoginManager()
 login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
 mail = Mail()
-migrate = Migrate()
+migrate = Migrate(compare_type=True)
 
 def create_app(config_class=Config):
     app = Flask(__name__)
