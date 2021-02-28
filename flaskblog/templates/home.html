@@ -11,7 +11,13 @@
             <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
           </div>
           <h2><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h2>
+          {% if post.content|length > 1000 %}
+          <p class="article-content">{{ post.content|truncate(1000) }}</p>
+          <a href="{{ url_for('posts.post', post_id=post.id) }}">read more?</a>
+          {% else %}
           <p class="article-content">{{ post.content }}</p>
+          {% endif %}
+          <!-- <p class="article-content">{{ post.content }}</p> -->
         </div>
       </article>
     {% endfor %}
