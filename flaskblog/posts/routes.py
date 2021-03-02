@@ -3,6 +3,7 @@ from flask_login import current_user, login_required
 from flaskblog import db
 from flaskblog.models import Post
 from flaskblog.posts.forms import PostForm
+from flaskblog.users.utils import get_image_file
 
 posts = Blueprint('posts', __name__)
 
@@ -16,12 +17,12 @@ def new_post():
         db.session.commit()
         flash('Post has been created!', 'success')
         return redirect(url_for('main.home'))
-    return render_template('create_post.html', title="New Post", form=form, legend='New Post')
+    return render_template('create_post.html', title="New Post", form=form, legend='New Post', get_image_file=get_image_file)
 
 @posts.route('/post/<int:post_id>')
 def post(post_id):
     post = Post.query.get_or_404(post_id)
-    return render_template('post.html', title=post.title, post=post)
+    return render_template('post.html', title=post.title, post=post, get_image_file=get_image_file)
 
 @posts.route('/post/<int:post_id>/update', methods=['GET', 'POST'])
 @login_required
@@ -39,7 +40,7 @@ def update_post(post_id):
     elif request.method == 'GET':
         form.title.data = post.title
         form.content.data = post.content
-    return render_template('create_post.html', title='Update Post', form=form, legend='Update Post')
+    return render_template('create_post.html', title='Update Post', form=form, legend='Update Post', get_image_file=get_image_file)
 
 @posts.route('/post/<int:post_id>/delete', methods=['POST'])
 @login_required

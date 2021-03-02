@@ -3,7 +3,8 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flaskblog import db, bcrypt
 from flaskblog.models import User, Post
 from flaskblog.users.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
-from flaskblog.users.utils import save_picture, send_reset_email
+from flaskblog.users.utils import save_picture, send_reset_email, get_image_file
+import logging
 
 users = Blueprint('users', __name__)
 
@@ -52,8 +53,8 @@ def account():
     form = UpdateAccountForm()
     if form.validate_on_submit():
         if form.picture.data:
-            picture_file = save_picture(form.picture.data)
-            current_user.image_file = picture_file
+            picture_hex = save_picture(form.picture)
+            current_user.image_file = picture_hex
         current_user.username = form.username.data
         current_user.email = form.email.data
         db.session.commit()
@@ -62,15 +63,19 @@ def account():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
-    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('account.html', title='Account', image_file=image_file, form=form)
+
+    AWS_image_file = get_image_file(current_image_file=current_user.image_file,)
+
+    return render_template('account.html', title='Account', image_file=AWS_image_file, form=form, get_image_file=get_image_file)
 
 @users.route('/user/<string:username>')
 def user_posts(username):
     page = request.args.get('page', 1, type=int)
     user = User.query.filter_by(username=username).first_or_404()
     posts = Post.query.filter_by(author=user).order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
-    return render_template('user_posts.html', posts=posts, user=user) 
+    AWS_image_file = get_image_file(current_image_file=user.image_file)
+
+    return render_template('user_posts.html', posts=posts, user=user, image_file=AWS_image_file, get_image_file=get_image_file) 
 
 @users.route('/reset_password', methods=['GET', 'POST'])
 def reset_request():
