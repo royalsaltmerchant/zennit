@@ -1,8 +1,12 @@
 import React, { Component } from 'react'
 import '../main.css'
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import NavItem from 'react-bootstrap/NavItem';
+import Container from 'react-bootstrap/Container'
 
-export default class Nav extends Component {
+export default class Navigation extends Component {
   constructor(props) {
     super(props)
     
@@ -11,19 +15,29 @@ export default class Nav extends Component {
   renderNavbarAccountOptions() {
     if(false) {
       return(
-        <div  className="navbar-nav">
-          <Link className="nav-item nav-link" to="/newpost">New Post</Link>
-          <img className="rounded-circle nav-user-img" src="{{ get_image_file(current_user.image_file) }}" alt="" />
-          <Link className="nav-item nav-link" to="/account">Account</Link>
-          <Link className="nav-item nav-link" to="/home">Logout</Link>
-        </div>
+        <Nav>
+          <NavItem >
+            <Nav.Link as={Link} to="/newpost">New Post</Nav.Link>
+          </NavItem>
+          <img class="rounded-circle nav-user-img" src="{{ get_image_file(current_user.image_file) }}" alt=""></img>
+          <NavItem>
+            <Nav.Link as={Link} to="/account">Account</Nav.Link>
+          </NavItem>
+          <NavItem>
+            <Nav.Link as={Link} to="/logout">Logout</Nav.Link>
+          </NavItem>
+        </Nav>
       )
     } else {
       return(
-        <div  className="navbar-nav">
-          <Link className="nav-item nav-link" to="/login">Login</Link>
-          <Link className="nav-item nav-link" to="/register">Register</Link>
-        </div>
+        <Nav>
+          <NavItem >
+            <Nav.Link as={Link} to="/login">Login</Nav.Link>
+          </NavItem>
+          <NavItem>
+            <Nav.Link as={Link} to="/register">Register</Nav.Link>
+          </NavItem>
+        </Nav>
       )
     }
   }
@@ -31,22 +45,24 @@ export default class Nav extends Component {
   render() {
     return (
       <div>
-        <nav className="navbar navbar-expand-md navbar-dark bg-color fixed-top">
-          <div className="container">
-            <Link className="navbar-brand mr-4" to="/home">Zennit</Link>
-            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarToggle">
-              <div className="navbar-nav mr-auto">
-                <Link className="nav-item nav-link" to="/home">Home</Link>
-                <Link className="nav-item nav-link" to="/about">About</Link>
-              </div>
+        <Navbar expand="md" bg="color" variant="dark" fixed="top" collapseOnSelect>
+          <Container>
+            <Navbar.Brand as={Link} className="mr-4" to="/home">Zennit</Navbar.Brand>
+            <Navbar.Toggle aria-controls="navbarToggle" />
+            <Navbar.Collapse id="navbarToggle">
+              <Nav className="mr-auto">
+                <NavItem>
+                  <Nav.Link as={Link} to="/home">Home</Nav.Link>
+                </NavItem>
+                <NavItem>
+                  <Nav.Link as={Link} to="/about">About</Nav.Link>
+                </NavItem>
+              </Nav>
               {/* <!-- Navbar Right Side --> */}
               {this.renderNavbarAccountOptions()}
-            </div>
-          </div>
-        </nav>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
       </div>
     )
   }

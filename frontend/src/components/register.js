@@ -1,54 +1,79 @@
 import React, { Component } from 'react'
-import { Link } from "react-router-dom";
+import { Route, Link, Redirect } from "react-router-dom";
+import Login from './login'
 import '../main.css'
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button'
 
 export default class Register extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      value: ''
+      value: '',
+      redirect: false
     }
 
   }
 
-  handleSubmit() {
-    
+  setRedirect = () => {
+    this.setState({
+      redirect: true
+    })
   }
 
-  handleChange() {
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
 
+  handleSubmit(event) {
+    event.preventDefault()
+    console.log(event.target.password.value)
   }
 
   render() {
     return (
       <div>
         <div className="content-section">
-          <form method="POST" onSubmit={() => this.handleSubmit()}>
-            <fieldset className="form-group">
-              <legend className="border-bottom mb-4">Join Today</legend>
-              <div className="form-group">
-                <label className="form-control-label">
-                  Username
-                  <input className="form-control form-control-lg is-invalid" 
-                    type="text" value={this.state.value} 
-                    onChange={() => this.handleChange()} />
-                </label>
-              </div>
-              <div className="form-group">
+          <legend className="border-bottom mb-4">Join Zennit!</legend>
+          <Form onSubmit={(event) => this.handleSubmit(event)}>
+            <Form.Group controlId="username">
+              <Form.Label>Password</Form.Label>
+              <Form.Control required
+                size="lg" 
+                type="username" 
+                placeholder="Username" />
+            </Form.Group>
 
-              </div>
-              <div className="form-group">
+            <Form.Group controlId="email">
+              <Form.Label>Email</Form.Label>
+              <Form.Control 
+                required
+                size="lg"
+                type="email"
+                placeholder="Enter email" />
+              <Form.Text className="text-muted">
+                We'll never share your email with anyone else.
+              </Form.Text>
+            </Form.Group>
 
-              </div>
-              <div className="form-group">
-
-              </div>
-            </fieldset>
-            <div className="form-group">
-              <input type="submit" value="Sign Up" className="btn btn-outline-info" />
-            </div>
-          </form>
+            <Form.Group controlId="password">
+              <Form.Label>Password</Form.Label>
+              <Form.Control 
+                required
+                size="lg" 
+                type="password" 
+                placeholder="Password" 
+                aria-describedby="passwordHelpBlock" />
+              <Form.Text id="passwordHelpBlock" muted>
+                Your password must be 8-20 characters long, contain letters and numbers, and
+                must not contain spaces, special characters, or emoji.
+              </Form.Text>
+            </Form.Group>
+            <Button variant="outline-info" type="submit">
+              Sign Up
+            </Button>
+          </Form>
         </div>
         <div className="border-top pt-3">
           <small className="text-muted">
