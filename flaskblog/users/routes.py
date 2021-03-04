@@ -1,12 +1,25 @@
-from flask import render_template, url_for, flash, redirect, request, Blueprint
+from flask import render_template, url_for, flash, redirect, request, Blueprint, Response
 from flask_login import login_user, current_user, logout_user, login_required
 from flaskblog import db, bcrypt
 from flaskblog.models import User, Post
 from flaskblog.users.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
 from flaskblog.users.utils import save_picture, send_reset_email, get_image_file
-import logging
+import logging, json
 
 users = Blueprint('users', __name__)
+
+@users.route('/api/register', methods=['POST'])
+def api_register():
+    data = json.loads(request.data)
+    username = data['username']
+    email = data['email'].lower()
+    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+
+    user = User(username=username, email=email, password=hashed_password)
+    db.session.add(user)
+    db.session.commit()
+
+    return Response("Success on create new user", status=201)
 
 @users.route('/register', methods=['GET', 'POST'])
 def register():
