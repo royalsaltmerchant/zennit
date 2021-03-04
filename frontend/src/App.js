@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'
 import {
   BrowserRouter as Router,
   Switch,
@@ -16,10 +18,37 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row'
 
 function App() {
+  const [authorization, setAuthorization] = useState(false)
+
+
+  useEffect(() => {
+    userAuthenticated()
+  });
+
+  async function userAuthenticated() {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: '/api/verify_jwt',
+        headers: {
+          "x-access-token": localStorage.getItem("token")
+        }
+      })
+      console.log(res)
+      if(res.status == 200) {
+        setAuthorization(true)
+      } else {
+        console.log('Token is invalid')
+      }
+    } catch {
+      console.log('could not connect to authorization check')
+    }
+  }
+
   return (
     <Router>
       <div className="main-body">
-        <Navigation />
+        <Navigation authorization={authorization}/>
         <Container>
             <Row>
               <div className="col-md-8">

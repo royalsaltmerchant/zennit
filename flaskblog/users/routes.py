@@ -5,6 +5,9 @@ from flaskblog.models import User, Post
 from flaskblog.users.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
 from flaskblog.users.utils import save_picture, send_reset_email, get_image_file
 import logging, json
+import jwt
+import datetime
+import os
 
 users = Blueprint('users', __name__)
 
@@ -16,7 +19,7 @@ class UserSchema(ma.Schema):
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
-@users.route('/api/register', methods=['POST'])
+@users.route('/api/register', methods=['GET', 'POST'])
 def api_register():
     data = json.loads(request.data)
     username = data['username']
@@ -52,6 +55,55 @@ def register():
         flash('Your account has been Created, you are now able to log in.', 'success')
         return redirect(url_for('main.home'))
     return render_template('register.html', title='Register', form=form)
+
+@users.route('/api/login', methods=['GET', 'POST'])
+def api_login():
+    data = json.loads(request.data)
+
+    email = data['email'].lower()
+    user = User.query.filter_by(email=email).first()
+    if user and bcrypt.check_password_hash(user.password, data['password']):
+        token = jwt.encode({'user_id': user.id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)}, os.environ.get('SECRET_KEY'))
+
+        response = Response(
+            response=json.dumps({'token': token}),
+            status=200,
+            mimetype='application/json'
+    )
+        return response
+
+@users.route('/api/verify_jwt', methods=['GET', 'POST'])
+def api_verify_jwt():
+    token = request.headers["x-access-token"]
+
+    if not token:
+        return Response(
+            response='No token passed',
+            status=400
+        )
+    else:
+        try:
+            verification = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS256"])
+            current_user = User.query.filter_by(id=verification['user_id']).first()
+        except:
+            raise
+            return Response(
+                response='Token is invalid',
+                status=400
+            )
+        if current_user:
+            user_serialized = user_schema.dump(current_user)
+            return Response(
+                response=json.dumps(user_serialized),
+                status=200,
+                mimetype='application/json'
+            )
+        else:
+            raise
+            return Response(
+                response='User does not exist',
+                status=400
+            )
 
 @users.route('/login', methods=['GET', 'POST'])
 def login():
