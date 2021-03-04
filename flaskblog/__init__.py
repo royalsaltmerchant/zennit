@@ -5,8 +5,11 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flaskblog.config import Config
 from flask_migrate import Migrate
+from flask_marshmallow import Marshmallow
+
 
 db = SQLAlchemy()
+ma = Marshmallow()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
 login_manager.login_view = 'users.login'
@@ -22,6 +25,7 @@ def create_app(config_class=Config):
     bcrypt.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
+    ma.init_app(app)
 
     from flaskblog.users.routes import users
     from flaskblog.posts.routes import posts

@@ -1,12 +1,20 @@
-from flask import render_template, url_for, flash, redirect, request, Blueprint, Response
+from flask import render_template, url_for, flash, redirect, request, Blueprint, Response, jsonify
 from flask_login import login_user, current_user, logout_user, login_required
-from flaskblog import db, bcrypt
+from flaskblog import db, bcrypt, ma
 from flaskblog.models import User, Post
 from flaskblog.users.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
 from flaskblog.users.utils import save_picture, send_reset_email, get_image_file
 import logging, json
 
 users = Blueprint('users', __name__)
+
+class UserSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ("id", "username", "email", "password", "image_file")
+
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
 
 @users.route('/api/register', methods=['POST'])
 def api_register():
@@ -19,7 +27,14 @@ def api_register():
     db.session.add(user)
     db.session.commit()
 
-    return Response("Success on create new user", status=201)
+    user_serialized = user_schema.dump(user)
+    response = Response(
+        response=json.dumps(user_serialized),
+        status=201,
+        mimetype='application/json'
+    )
+
+    return response
 
 @users.route('/register', methods=['GET', 'POST'])
 def register():
