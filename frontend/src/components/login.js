@@ -24,11 +24,11 @@ export default function Login() {
         }
       })
       console.log(res)
-      if (res.status == 200) {
+      if (res.status === 200) {
         const token = res.data.token
-        localStorage.setItem("token", token)
+        localStorage.setItem("token", "Bearer " + token)
         setLoginStatus(true)
-        history.push("/")
+        history.replace("/")
         history.go("/")
       } else {
         setLoginStatus(false)
@@ -42,7 +42,7 @@ export default function Login() {
   return (
     <div>
       <div className="content-section">
-        <legend className="border-bottom mb-4">login</legend>
+        <legend className="border-bottom mb-4">Login</legend>
         <Form onSubmit={(event) => handleSubmit(event)}>
           <Form.Group controlId="email">
             <Form.Label>Email</Form.Label>
@@ -69,7 +69,7 @@ export default function Login() {
       </div>
       <div className="border-top pt-3">
         <small className="text-muted">
-          Need An Account? <Link className="ml-2" to="/register">register</Link>
+          Need An Account? <Link className="ml-2" to="/register">Register Here!</Link>
         </small>
       </div>
     </div>

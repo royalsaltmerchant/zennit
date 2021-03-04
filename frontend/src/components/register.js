@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { Route, Link, useHistory } from "react-router-dom";
-import Login from './login'
+import { Link, useHistory } from "react-router-dom";
 import '../main.css'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import axios from 'axios'
 
 export default function Register(props) {
-  const [value, setValue] = useState('')
+  // const [value, setValue] = useState('')
   const history = useHistory()
 
   async function handleSubmit(event) {

@@ -39,23 +39,6 @@ def api_register():
 
     return response
 
-@users.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        username = form.username.data
-        email = form.email.data.lower()
-
-        user = User(username=username, email=email, password=hashed_password)
-        db.session.add(user)
-        db.session.commit()
-        flash('Your account has been Created, you are now able to log in.', 'success')
-        return redirect(url_for('main.home'))
-    return render_template('register.html', title='Register', form=form)
-
 @users.route('/api/login', methods=['GET', 'POST'])
 def api_login():
     data = json.loads(request.data)
@@ -63,7 +46,11 @@ def api_login():
     email = data['email'].lower()
     user = User.query.filter_by(email=email).first()
     if user and bcrypt.check_password_hash(user.password, data['password']):
-        token = jwt.encode({'user_id': user.id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)}, os.environ.get('SECRET_KEY'))
+        payload = {
+            'user_id': user.id,
+            'exp': datetime.datetime.utcnow()+datetime.timedelta(hours=24)
+            }
+        token = jwt.encode(payload, os.environ.get('SECRET_KEY'), algorithm="HS256")
 
         response = Response(
             response=json.dumps({'token': token}),
@@ -71,10 +58,14 @@ def api_login():
             mimetype='application/json'
     )
         return response
+    else:
+        raise
 
 @users.route('/api/verify_jwt', methods=['GET', 'POST'])
 def api_verify_jwt():
-    token = request.headers["x-access-token"]
+    req_token = request.headers["x-access-token"]
+    token_split = req_token.split(' ')
+    token = token_split[1]
 
     if not token:
         return Response(
@@ -105,27 +96,6 @@ def api_verify_jwt():
                 status=400
             )
 
-@users.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        email = form.email.data.lower()
-        user = User.query.filter_by(email=email).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('main.home'))
-        else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
-            
-    return render_template('login.html', title='Login', form=form)
-
-@users.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('main.home'))
 
 @users.route('/account', methods=['GET', 'POST'])
 @login_required

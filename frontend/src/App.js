@@ -4,13 +4,13 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
 } from "react-router-dom";
 import Navigation from  './components/nav.js'
 import About from './components/about.js'
 import Sidebar from './components/sidebar.js'
 import Register from './components/register.js'
 import Login from './components/login.js'
+import Logout from './components/logout.js'
 
 import './main.css'
 
@@ -20,28 +20,32 @@ import Row from 'react-bootstrap/Row'
 function App() {
   const [authorization, setAuthorization] = useState(false)
 
-
   useEffect(() => {
     userAuthenticated()
   });
 
   async function userAuthenticated() {
-    try {
-      const res = await axios({
-        method: 'get',
-        url: '/api/verify_jwt',
-        headers: {
-          "x-access-token": localStorage.getItem("token")
+    let token = localStorage.getItem("token")
+    if(!token) {
+      setAuthorization(false)
+    } else {
+      try {
+        const res = await axios({
+          method: 'get',
+          url: '/api/verify_jwt',
+          headers: {
+            "x-access-token": localStorage.getItem("token")
+          }
+        })
+        console.log(res)
+        if(res.status == 200) {
+          setAuthorization(true)
+        } else {
+          console.log('Token is invalid')
         }
-      })
-      console.log(res)
-      if(res.status == 200) {
-        setAuthorization(true)
-      } else {
-        console.log('Token is invalid')
+      } catch {
+        console.log('could not connect to authorization check')
       }
-    } catch {
-      console.log('could not connect to authorization check')
     }
   }
 
@@ -61,6 +65,9 @@ function App() {
                   </Route>
                   <Route path="/login">
                     <Login />
+                  </Route>
+                  <Route path="/logout">
+                    <Logout />
                   </Route>
                 </Switch>
               </div>
