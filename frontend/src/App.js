@@ -15,7 +15,6 @@ import Sidebar from './components/sidebar.js'
 import Register from './components/register.js'
 import Login from './components/login.js'
 import Logout from './components/logout.js'
-import AlertMessage from './components/alert.js'
 import Account from './components/account.js'
 import Posts from './components/posts.js'
 
@@ -23,17 +22,35 @@ import './main.css'
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row'
+import Alert from 'react-bootstrap/Alert'
 
 
 function App() {
   const [authorization, setAuthorization] = useState(false)
+  const [alert, setAlert] = useState(false)
+  const [alertText, setAlertText] = useState('Welcome!')
 
   useEffect(() => {
     userAuthenticated()
   });
 
+  function renderAlert() {
+    if(alert) {
+      setTimeout(() => {
+        setAlert(false)
+        localStorage.setItem("loginMessage", true)
+      }, 5000)
+      return(
+        <Alert variant="success">
+          {alertText}
+        </Alert>
+      )
+    }
+  }
+
   async function userAuthenticated() {
     let token = localStorage.getItem("token")
+    let loginMessage = localStorage.getItem("loginMessage")
     if(!token) {
       setAuthorization(false)
     } else {
@@ -46,8 +63,14 @@ function App() {
           }
         })
         console.log(res)
-        if(res.status == 200) {
+        if(res.status === 200) {
           setAuthorization(true)
+          if(!loginMessage) {
+            setAlert(true)
+            setAlertText('Successful Login!')
+          } else {
+            setAlert(false)
+          }
         } else {
           console.log('Token is invalid')
         }
@@ -65,7 +88,7 @@ function App() {
           <Container>
               <Row>
                 <div className="col-md-8">
-                  {/* <AlertMessage /> */}
+                  {renderAlert()}
                   <Switch>
                     <Route exact path="/">
                       <Posts />

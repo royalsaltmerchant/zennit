@@ -10,6 +10,7 @@ export default function Logout() {
 
   function runLogout() {
     localStorage.removeItem("token")
+    localStorage.removeItem("loginMessage")
     history.push("/")
     history.go("/")
   }

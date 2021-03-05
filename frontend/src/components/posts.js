@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from "react-router-dom";
 import Proptypes from 'prop-types'
 import { connect } from 'react-redux'
 import { fetchPosts } from '../actions/postActions'
@@ -17,12 +18,12 @@ class Posts extends Component {
     return <small className="text-muted">{formattedDate}</small>
   }
 
-  renderArticleContent(content) {
+  renderArticleContent(content, post) {
     if (content.length > 1000) {
       return(
         <div>
           <p className="article-content">{content.substr(0, 1000)}</p>
-          <a href="{{ url_for('posts.post', post_id=post.id) }}">Read More</a>
+          <Link className="mr-2" to={`/post/${post.id}`}>Read More</Link>
         </div>
       )
     } else {
@@ -44,11 +45,11 @@ class Posts extends Component {
         {this.renderProfileImage(post['user.image_file'])}
         <Media.Body>
           <div className="article-metadata">
-            <a className="mr-2" href="{{ url_for('users.user_posts', username=post.author.username) }}">{post['user.username']}</a>
+            <Link className="mr-2" to={`/user_posts/${post['user.username']}`}>{post['user.username']}</Link>
             {this.renderDatePosted(post.date_posted)}
           </div>
-          <h2><a className="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{post.title}</a></h2>
-          {this.renderArticleContent(post.content)}
+          <h2><Link className="article-title" to={`/post/${post.id}`}>{post.title}</Link></h2>
+          {this.renderArticleContent(post.content, post.id)}
         </Media.Body>
       </Media>
       ))

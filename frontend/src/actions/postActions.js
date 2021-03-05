@@ -7,7 +7,6 @@ export const fetchPosts = () => dispatch => {
     url: '/api/posts',
   })
   .then(res => {
-    console.log(res)
     dispatch({
       type: FETCH_POSTS,
       payload: res.data

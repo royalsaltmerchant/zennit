@@ -4,6 +4,7 @@ from flaskblog import db, bcrypt, ma
 from flaskblog.models import User, Post
 from flaskblog.users.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
 from flaskblog.users.utils import save_picture, send_reset_email, get_image_file
+from functools import wraps
 import logging, json
 import jwt
 import datetime
@@ -59,43 +60,74 @@ def api_login():
     )
         return response
     else:
-        raise
+        return Response(
+            response='Incorrect account information',
+            status=400
+        )
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+
+        if 'x-access-token' in request.headers:
+            req_token = request.headers["x-access-token"]
+            token_split = req_token.split(' ')
+            token = token_split[1]
+
+        if not token:
+            return jsonify({'message': 'Token is missing'})
+
+        try:
+            verification = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS256"])
+            current_user = User.query.filter_by(id=verification['user_id']).first()
+        except:
+            raise
+            return jsonify({'message': 'Invalid token or user'})
+
+        return f(current_user, *args, **kwargs)
+    return decorated
 
 @users.route('/api/verify_jwt', methods=['GET', 'POST'])
 def api_verify_jwt():
-    req_token = request.headers["x-access-token"]
-    token_split = req_token.split(' ')
-    token = token_split[1]
+    token = None
+    
+    if 'x-access-token' in request.headers:
+        req_token = request.headers["x-access-token"]
+        token_split = req_token.split(' ')
+        token = token_split[1]
 
     if not token:
         return Response(
             response='No token passed',
             status=400
         )
-    else:
-        try:
-            verification = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS256"])
-            current_user = User.query.filter_by(id=verification['user_id']).first()
-        except:
-            raise
-            return Response(
-                response='Token is invalid',
-                status=400
-            )
-        if current_user:
-            user_serialized = user_schema.dump(current_user)
-            return Response(
-                response=json.dumps(user_serialized),
-                status=200,
-                mimetype='application/json'
-            )
-        else:
-            raise
-            return Response(
-                response='User does not exist',
-                status=400
-            )
+    try:
+        verification = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS256"])
+        current_user = User.query.filter_by(id=verification['user_id']).first()
+        user_serialized = user_schema.dump(current_user)
+        return Response(
+            response=json.dumps(user_serialized),
+            status=200,
+            mimetype='application/json'
+        )
+    except:
+        raise
+        return Response(
+            response='Token is invalid',
+            status=400
+        )
 
+@users.route('/api/get_user', methods=['GET', 'POST'])
+@token_required
+def get_user(current_user):
+    user_serialized = user_schema.dump(current_user)
+
+    return Response(
+        response=json.dumps(user_serialized),
+        status=200,
+        mimetype='application/json'
+    )
 
 @users.route('/account', methods=['GET', 'POST'])
 @login_required
