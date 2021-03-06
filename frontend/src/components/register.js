@@ -12,8 +12,8 @@ export default function Register(props) {
   async function handleSubmit(event) {
     event.preventDefault()
     history.push("/login")
-    const username = event.target.username.value
-    const email = event.target.email.value
+    const username = event.target.username.value.trim()
+    const email = event.target.email.value.trim()
     const password = event.target.password.value
 
     try {

@@ -22,7 +22,7 @@ from flaskblog import mail
 def save_picture(form_picture):
     S3_BUCKET = os.environ.get('S3_BUCKET')
     client = boto3.client('s3')
-    file_name = form_picture.data.filename
+    file_name = form_picture.filename
 
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(file_name)
@@ -30,7 +30,7 @@ def save_picture(form_picture):
     picture_path = os.path.join(current_app.root_path, 'static/profile_pics', picture_hex)
 
     output_size = (125, 125)
-    i = Image.open(form_picture.data)
+    i = Image.open(form_picture)
     i.thumbnail(output_size)
     i.save(picture_path)
 

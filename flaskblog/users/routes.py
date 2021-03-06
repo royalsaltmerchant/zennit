@@ -76,11 +76,15 @@ def token_required(f):
             token = token_split[1]
 
         if not token:
-            return jsonify({'message': 'Token is missing'})
+            raise
+            return Response(
+            response='No token passed',
+            status=400
+        )
 
         try:
             verification = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS256"])
-            current_user = User.query.filter_by(id=verification['user_id']).first()
+            current_user = db.session.query(User).filter_by(id=verification['user_id']).first()
         except:
             raise
             return jsonify({'message': 'Invalid token or user'})
@@ -91,20 +95,21 @@ def token_required(f):
 @users.route('/api/verify_jwt', methods=['GET', 'POST'])
 def api_verify_jwt():
     token = None
-    
+
     if 'x-access-token' in request.headers:
         req_token = request.headers["x-access-token"]
         token_split = req_token.split(' ')
         token = token_split[1]
 
     if not token:
+        raise
         return Response(
             response='No token passed',
             status=400
         )
     try:
         verification = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS256"])
-        current_user = User.query.filter_by(id=verification['user_id']).first()
+        current_user = db.session.query(User).filter_by(id=verification['user_id']).first()
         user_serialized = user_schema.dump(current_user)
         return Response(
             response=json.dumps(user_serialized),
@@ -121,6 +126,27 @@ def api_verify_jwt():
 @users.route('/api/get_user', methods=['GET', 'POST'])
 @token_required
 def get_user(current_user):
+    user_serialized = user_schema.dump(current_user)
+
+    return Response(
+        response=json.dumps(user_serialized),
+        status=200,
+        mimetype='application/json'
+    )
+
+@users.route('/api/update_user', methods={'GET', 'POST'})
+@token_required
+def update_user(current_user):
+    logging.warning('##################################')
+    logging.warning(request.files['image_file'])
+    if request.files['image_file']:
+        picture_hex = save_picture(request.files['image_file'])
+        current_user.image_file = picture_hex
+    if request.form['email']:
+        current_user.email = request.form['email'].lower()
+    if request.form['username']:
+        current_user.username = request.form['username']
+    db.session.commit()
     user_serialized = user_schema.dump(current_user)
 
     return Response(
