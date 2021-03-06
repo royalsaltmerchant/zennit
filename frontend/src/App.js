@@ -18,6 +18,7 @@ import Logout from './components/logout.js'
 import Account from './components/account.js'
 import Posts from './components/posts.js'
 import UserPosts from './components/userPosts.js'
+import SinglePost from './components/singlePost.js'
 
 import './main.css'
 
@@ -99,6 +100,9 @@ function App() {
                     </Route>
                     <Route path="/user_posts/:username">
                       <UserPosts />
+                    </Route>
+                    <Route path="/post/:id">
+                      <SinglePost />
                     </Route>
                     <Route path="/about">
                       <About />
