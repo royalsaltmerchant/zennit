@@ -10,7 +10,7 @@ class Posts extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      postsViewable: 2
+      postsViewable: 4
     }
   }
 

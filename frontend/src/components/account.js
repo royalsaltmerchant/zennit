@@ -38,13 +38,11 @@ class Account extends Component {
       })
     }
     if(this.state.alert) {
-      if(alert) {
-        setTimeout(() => {
-          this.setState({
-            alert: false
-          })
-        }, 5000)
-      }
+      setTimeout(() => {
+        this.setState({
+          alert: false
+        })
+      }, 5000)
     }
   }
 

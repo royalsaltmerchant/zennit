@@ -33,15 +33,21 @@ function App() {
   const [alert, setAlert] = useState(false)
   const [alertText, setAlertText] = useState('Welcome!')
 
+  const deletePost = localStorage.getItem("deletePost")
+  const newPost = localStorage.getItem("newPost")
+  const loginMessage = localStorage.getItem("loginMessage")
+  const token = localStorage.getItem("token")
+
   useEffect(() => {
     userAuthenticated()
-  });
+  }, [authorization || !token])
 
   function renderAlert() {
-    if(alert) {
+    if(alert && authorization && loginMessage) {
       setTimeout(() => {
         setAlert(false)
-        localStorage.setItem("loginMessage", true)
+        setAlertText("Welcome!")
+        localStorage.removeItem("loginMessage")
       }, 5000)
       return(
         <Alert variant="success">
@@ -52,8 +58,6 @@ function App() {
   }
 
   async function userAuthenticated() {
-    let token = localStorage.getItem("token")
-    let loginMessage = localStorage.getItem("loginMessage")
     if(!token) {
       setAuthorization(false)
     } else {
@@ -68,17 +72,15 @@ function App() {
         console.log(res)
         if(res.status === 200) {
           setAuthorization(true)
-          if(!loginMessage) {
-            setAlert(true)
-            setAlertText('Successful Login!')
-          } else {
-            setAlert(false)
-          }
+          setAlert(true)
+          setAlertText('Login Successful! Welcome Back!')
         } else {
           console.log('Token is invalid')
+          localStorage.removeItem("token")
         }
       } catch {
         console.log('could not connect to authorization check')
+        localStorage.removeItem("token")
       }
     }
   }
@@ -94,10 +96,10 @@ function App() {
                   {renderAlert()}
                   <Switch>
                     <Route exact path="/">
-                      <Posts />
+                      <Posts alert={alert}/>
                     </Route>
                     <Route path="/home">
-                      <Posts />
+                      <Posts alert={alert}/>
                     </Route>
                     <Route path="/user_posts/:username">
                       <UserPosts />

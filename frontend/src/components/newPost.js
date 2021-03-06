@@ -12,6 +12,17 @@ export default function NewPost() {
   const [alertText, setAlertText] = useState('Something went wrong, please try again later!')
   const history = useHistory()
 
+  useEffect(() => {
+    // localStorage.removeItem("loginMessage")
+    if(alert) {
+      if(alert) {
+        setTimeout(() => {
+          setAlert(false)
+        }, 5000)
+      }
+    }
+  });
+
   async function handleSubmit(event) {
     event.preventDefault()
     const title = event.target.title.value.trim()
@@ -19,17 +30,20 @@ export default function NewPost() {
 
     try {
       const res = await axios({
+        headers: {
+          "x-access-token": localStorage.getItem("token")
+        },
         method: 'post',
-        url: '/api/create_post',
+        url: '/api/new_post',
         data: {
           title: title,
           content: content
         }
       })
       console.log(res)
-      if (res.status === 200) {
+      if (res.status === 201) {
+        localStorage.setItem("newPost", true)
         history.replace("/")
-        history.go("/")
       } else {
         setAlert(true)
       }

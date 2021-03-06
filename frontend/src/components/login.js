@@ -14,14 +14,11 @@ export default function Login() {
   const history = useHistory()
 
   useEffect(() => {
-    localStorage.removeItem("loginMessage")
-    if(alert) {
       if(alert) {
         setTimeout(() => {
           setAlert(false)
         }, 5000)
       }
-    }
   });
 
   async function handleSubmit(event) {
@@ -42,6 +39,7 @@ export default function Login() {
       if (res.status === 200) {
         const token = res.data.token
         localStorage.setItem("token", "Bearer " + token)
+        localStorage.setItem("loginMessage", true)
         setLoginStatus(true)
         history.replace("/")
         history.go("/")
