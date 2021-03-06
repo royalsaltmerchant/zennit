@@ -17,6 +17,7 @@ import Login from './components/login.js'
 import Logout from './components/logout.js'
 import Account from './components/account.js'
 import Posts from './components/posts.js'
+import UserPosts from './components/userPosts.js'
 
 import './main.css'
 
@@ -95,6 +96,9 @@ function App() {
                     </Route>
                     <Route path="/home">
                       <Posts />
+                    </Route>
+                    <Route path="/user_posts/:username">
+                      <UserPosts />
                     </Route>
                     <Route path="/about">
                       <About />
