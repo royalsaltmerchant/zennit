@@ -7,6 +7,13 @@ import Media from 'react-bootstrap/Media'
 import '../main.css'
 
 class Posts extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      postsViewable: 2
+    }
+  }
+
   componentDidMount() {
     this.props.fetchPosts()
   }
@@ -40,6 +47,7 @@ class Posts extends Component {
   }
 
   renderPostContent() {
+    const {postsViewable} = this.state
     const postItems = this.props.posts.map(post => (
       <Media className="content-section" key={post.id}>
         {this.renderProfileImage(post['user.image_file'])}
@@ -53,13 +61,25 @@ class Posts extends Component {
         </Media.Body>
       </Media>
       ))
-    return postItems
+    return postItems.slice(0, postsViewable)
+  }
+
+  renderMorePosts(event) {
+    const target = event.target
+    const {postsViewable} = this.state
+    const {posts} = this.props
+
+    if(target.scrollHeight - target.scrollTop === target.clientHeight && postsViewable !== posts.length) {
+      this.setState({
+        postsViewable: postsViewable + 2
+      }, () => {console.log(postsViewable)})
+    }
   }
 
   render() {
     
     return (
-      <div>
+      <div className="scrolling" onScroll={(event) => this.renderMorePosts(event)}>
         <h1>Home</h1>
         {this.renderPostContent()}
       </div>

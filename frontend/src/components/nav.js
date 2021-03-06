@@ -45,7 +45,7 @@ export default class Navigation extends Component {
   render() {
     return (
       <div>
-        <Navbar expand="md" bg="color" variant="dark" fixed="top" collapseOnSelect>
+        <Navbar expand="md" bg="color" variant="dark" collapseOnSelect>
           <Container>
             <Navbar.Brand as={Link} className="mr-4" to="/home">Zennit</Navbar.Brand>
             <Navbar.Toggle aria-controls="navbarToggle" />
