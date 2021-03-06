@@ -37,6 +37,15 @@ class Account extends Component {
         submission: false
       })
     }
+    if(this.state.alert) {
+      if(alert) {
+        setTimeout(() => {
+          this.setState({
+            alert: false
+          })
+        }, 5000)
+      }
+    }
   }
 
   renderAlert() {
