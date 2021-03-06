@@ -26,12 +26,12 @@ class UserPosts extends Component {
     return <small className="text-muted">{formattedDate}</small>
   }
 
-  renderArticleContent(content, post) {
+  renderArticleContent(content, id) {
     if (content.length > 1000) {
       return(
         <div>
           <p className="article-content">{content.substr(0, 1000)}</p>
-          <Link className="mr-2" to={`/post/${post.id}`}>Read More</Link>
+          <Link className="mr-2" to={`/post/${id}`}>Read More</Link>
         </div>
       )
     } else {
@@ -85,10 +85,10 @@ class UserPosts extends Component {
   }
 
   render() {
-    
+    const {username} = this.props.match.params
     return (
       <div className="scrolling" onScroll={(event) => this.renderMorePosts(event)}>
-        <h1>Home</h1>
+        <h1>{username}</h1>
         {this.renderPostContent()}
       </div>
     )
