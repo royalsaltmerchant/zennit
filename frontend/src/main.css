@@ -78,3 +78,7 @@
     height: 100vh;
     overflow-y: scroll;
   }
+
+  .alert {
+    margin-top: 20px;
+  }
