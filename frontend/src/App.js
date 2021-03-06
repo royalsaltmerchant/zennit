@@ -19,6 +19,7 @@ import Account from './components/account.js'
 import Posts from './components/posts.js'
 import UserPosts from './components/userPosts.js'
 import SinglePost from './components/singlePost.js'
+import NewPost from './components/newPost.js'
 
 import './main.css'
 
@@ -112,6 +113,9 @@ function App() {
                     </Route>
                     <Route path="/register">
                       <Register />
+                    </Route>
+                    <Route path="/new_post">
+                      <NewPost />
                     </Route>
                     <Route path="/login">
                       <Login />

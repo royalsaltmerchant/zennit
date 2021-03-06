@@ -17,7 +17,7 @@ export default class Navigation extends Component {
       return(
         <Nav>
           <NavItem >
-            <Nav.Link as={Link} to="/newpost">New Post</Nav.Link>
+            <Nav.Link as={Link} to="/new_post">New Post</Nav.Link>
           </NavItem>
           {/* <img class="rounded-circle nav-user-img" src="{{ get_image_file(current_user.image_file) }}" alt=""></img> */}
           <NavItem>
