@@ -1,5 +1,4 @@
-from flask import render_template, url_for, flash, redirect, request, Blueprint, Response, jsonify
-from flask_login import current_user
+from flask import render_template, url_for, flash, redirect, request, Blueprint, Response, jsonify, current_app
 from flaskblog.models import Post
 from flaskblog import db, bcrypt, ma
 import logging, json
@@ -24,6 +23,10 @@ class PostSchema(ma.Schema):
 
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)
+
+@main.route("/")
+def to_react():
+    return current_app.send_static_file('index.html')
 
 @main.route("/api/posts")
 def posts():

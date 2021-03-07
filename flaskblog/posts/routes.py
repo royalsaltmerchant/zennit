@@ -1,8 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request, abort, Blueprint, Response, jsonify
-from flask_login import current_user, login_required
 from flaskblog import db, ma 
 from flaskblog.models import Post, User
-from flaskblog.posts.forms import PostForm
 from flaskblog.users.routes import token_required
 import logging, json
 import jwt
@@ -38,24 +36,6 @@ def api_new_post(current_user):
         return response
     except:
         raise
-
-@posts.route('/post/<int:post_id>/update', methods=['GET', 'POST'])
-@login_required
-def update_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    if post.author != current_user:
-        abort(403)
-    form = PostForm()
-    if form.validate_on_submit():
-        post.title = form.title.data
-        post.content = form.content.data
-        db.session.commit()
-        flash('Your post has been updated.', 'success')
-        return redirect(url_for('posts.post', post_id=post.id))
-    elif request.method == 'GET':
-        form.title.data = post.title
-        form.content.data = post.content
-    return render_template('create_post.html', title='Update Post', form=form, legend='Update Post', get_image_file=get_image_file)
 
 @posts.route('/api/update_post', methods=['POST'])
 @token_required
