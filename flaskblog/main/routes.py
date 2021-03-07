@@ -24,15 +24,6 @@ class PostSchema(ma.Schema):
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)
 
-@main.route('/', defaults={'path': ''})
-@main.route('/<path:path>')
-def catch_all(path):
-    return current_app.send_static_file('index.html')
-
-@main.errorhandler(404)   
-def not_found(e):   
-  return current_app.send_static_file('index.html')
-
 @main.route("/api/posts")
 def posts():
     posts = Post.query.order_by(Post.date_posted.desc())
