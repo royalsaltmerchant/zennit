@@ -26,11 +26,11 @@ posts_schema = PostSchema(many=True)
 
 @main.errorhandler(404)
 def not_found(e):
-    return render_template("index.html")
+    return current_app.send_static_file('index.html')
 
 @main.route("/")
 def to_react():
-    return render_template("index.html")
+    return current_app.send_static_file('index.html')
 
 @main.route("/api/posts")
 def posts():
