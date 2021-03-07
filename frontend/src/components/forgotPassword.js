@@ -10,57 +10,50 @@ import Alert from 'react-bootstrap/Alert'
 export default function Login() {
   const [loginStatus, setLoginStatus] = useState(false)
   const [alert, setAlert] = useState(false)
-  const [alertType, setAlertType] = useState('warning')
   const [alertText, setAlertText] = useState('Something went wrong, please try again later!')
+  const [alertType, setAlertType] = useState('warning')
   const history = useHistory()
 
   useEffect(() => {
       if(alert) {
         setTimeout(() => {
           setAlert(false)
-        }, 5000)
+        }, 9000)
       }
   });
 
   async function handleSubmit(event) {
     event.preventDefault()
     const email = event.target.email.value.trim()
-    const password = event.target.password.value
 
     try {
       const res = await axios({
         method: 'post',
-        url: '/api/login',
+        url: '/api/request_reset_email',
         data: {
-          email: email,
-          password: password
+          email: email
         }
       })
       console.log(res)
       if (res.status === 200) {
-        const token = res.data.token
-        localStorage.setItem("token", "Bearer " + token)
-        localStorage.setItem("loginMessage", true)
-        setLoginStatus(true)
-        history.replace("/")
-        history.go("/")
+        setAlert(true)
+        setAlertType('success')
+        setAlertText('Request Sent! Check Email For Password Reset Link!')
       } else {
-        setLoginStatus(false)
         setAlert(true)
         setAlertType('warning')
-        setAlertText('Something went wrong, please try again later!')
+        setAlertText('Something Went Wrong, Please Try Again Later!')
       }
     } catch (error) {
-      setLoginStatus(false)
       console.log(error.response)
       if(error.response.status === 400) {
         setAlert(true)
         setAlertType('warning')
-        setAlertText('Incorrect Email or Password')
+        setAlertText('No User Found By This Email! Try Again!')
       } else {
         setAlert(true)
         setAlertType('danger')
-        setAlertText('Something went wrong, please try again later!')
+        setAlertText('Something Went Wrong, Please Try Again Later!')
       }
     }
     
@@ -80,7 +73,7 @@ export default function Login() {
     <div>
       {renderAlert()}
       <div className="content-section">
-        <legend className="border-bottom mb-4">Login</legend>
+        <legend className="border-bottom mb-4">Reset Password</legend>
         <Form onSubmit={(event) => handleSubmit(event)}>
           <Form.Group controlId="email">
             <Form.Label>Email</Form.Label>
@@ -90,27 +83,10 @@ export default function Login() {
               type="email"
               placeholder="Account Email" />
           </Form.Group>
-
-          <Form.Group controlId="password">
-            <Form.Label>Password</Form.Label>
-            <Form.Control 
-              required
-              size="lg" 
-              type="password" 
-              placeholder="Account Password" />
-          </Form.Group>
             <Button variant="outline-info" type="submit">
-              Login
+              Request Password Reset
             </Button>
-            <small className="text-muted ml-2">
-              <Link to="/forgot_password">Forgot Password?</Link>
-            </small>
         </Form>
-      </div>
-      <div className="border-top pt-3">
-        <small className="text-muted">
-          Need An Account? <Link className="ml-2" to="/register">Sign Up Here!</Link>
-        </small>
       </div>
     </div>
   )

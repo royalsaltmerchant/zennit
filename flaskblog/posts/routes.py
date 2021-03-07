@@ -3,7 +3,6 @@ from flask_login import current_user, login_required
 from flaskblog import db, ma 
 from flaskblog.models import Post, User
 from flaskblog.posts.forms import PostForm
-from flaskblog.users.utils import get_image_file
 from flaskblog.users.routes import token_required
 import logging, json
 import jwt
@@ -58,6 +57,28 @@ def update_post(post_id):
         form.content.data = post.content
     return render_template('create_post.html', title='Update Post', form=form, legend='Update Post', get_image_file=get_image_file)
 
+@posts.route('/api/update_post', methods=['POST'])
+@token_required
+def api_update_post(current_user):
+    try:
+        data = json.loads(request.data)
+        post = data['post_id']
+        post_to_update = db.session.query(Post).filter_by(id=post).first()
+        post_to_update.title = data['title']
+        post_to_update.content =data['content']
+
+        db.session.commit()
+
+        post_serialized = post_schema.dump(post_to_update)
+        response = Response(
+            response=json.dumps(post_serialized),
+            status=200,
+            mimetype='application/json'
+        )
+        return response
+    except:
+        raise
+
 @posts.route('/api/delete_post', methods=['POST'])
 @token_required
 def api_delete_post(current_user):
@@ -75,14 +96,3 @@ def api_delete_post(current_user):
             )
     except:
         raise
-
-@posts.route('/post/<int:post_id>/delete', methods=['POST'])
-@login_required
-def delete_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    if post.author != current_user:
-        abort(403)
-    db.session.delete(post)
-    db.session.commit()
-    flash('Your post has been deleted', 'success')
-    return redirect(url_for('main.home'))

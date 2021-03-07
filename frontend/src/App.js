@@ -20,6 +20,9 @@ import Posts from './components/posts.js'
 import UserPosts from './components/userPosts.js'
 import SinglePost from './components/singlePost.js'
 import NewPost from './components/newPost.js'
+import UpdatePost from './components/updatePost.js'
+import ForgotPassword from './components/forgotPassword.js'
+import ResetPassword from './components/resetPassword.js'
 
 import './main.css'
 
@@ -33,8 +36,6 @@ function App() {
   const [alert, setAlert] = useState(false)
   const [alertText, setAlertText] = useState('Welcome!')
 
-  const deletePost = localStorage.getItem("deletePost")
-  const newPost = localStorage.getItem("newPost")
   const loginMessage = localStorage.getItem("loginMessage")
   const token = localStorage.getItem("token")
 
@@ -107,11 +108,20 @@ function App() {
                     <Route path="/post/:id">
                       <SinglePost />
                     </Route>
+                    <Route path="/update/post/:id">
+                      <UpdatePost />
+                    </Route>
                     <Route path="/about">
                       <About />
                     </Route>
                     <Route path="/account">
                       <Account />
+                    </Route>
+                    <Route path="/forgot_password">
+                      <ForgotPassword />
+                    </Route>
+                    <Route path="/reset_password/:token">
+                      <ResetPassword />
                     </Route>
                     <Route path="/register">
                       <Register />

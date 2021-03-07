@@ -106,10 +106,12 @@ class SinglePost extends Component {
 
   renderEditButtons(postUsername) {
     const {username} = this.props.user
+    const {id} = this.props.match.params
+
     if(username === postUsername && localStorage.getItem("token")) {
       return(
         <div>
-          <a className="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('posts.update_post', post_id=post.id) }}">Update</a>
+          <Button as={Link} className="mt-1 mb-1" size="sm" to={`/update/post/${id}`}>Update</Button>
           <Button onClick={() => this.handleModalToggle()} className="m-1" variant="danger" size="sm">Delete</Button>
         </div>
       )

@@ -38,23 +38,23 @@ def save_picture(form_picture):
 
     return picture_hex
 
-def get_image_file(current_image_file):
-    s3 = boto3.resource('s3')
-    S3_BUCKET = os.environ.get('S3_BUCKET')
-    my_bucket = s3.Bucket(S3_BUCKET)
+# def get_image_file(current_image_file):
+#     s3 = boto3.resource('s3')
+#     S3_BUCKET = os.environ.get('S3_BUCKET')
+#     my_bucket = s3.Bucket(S3_BUCKET)
 
-    try: 
-        filtered_image_file = list(my_bucket.objects.filter(Prefix=current_image_file))
-        image_file_key = filtered_image_file[0].key
-        AWS_image_file = f'https://{S3_BUCKET}.s3.amazonaws.com/{image_file_key}'
-    except:
-        AWS_image_file = f'https://{S3_BUCKET}.s3.amazonaws.com/daruma.jpg'
+#     try: 
+#         filtered_image_file = list(my_bucket.objects.filter(Prefix=current_image_file))
+#         image_file_key = filtered_image_file[0].key
+#         AWS_image_file = f'https://{S3_BUCKET}.s3.amazonaws.com/{image_file_key}'
+#     except:
+#         AWS_image_file = f'https://{S3_BUCKET}.s3.amazonaws.com/daruma.jpg'
 
-    return AWS_image_file
+#     return AWS_image_file
 
 
 def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message('Password reset request', sender='testerdemosalt@gmail.com', recipients=[user.email])
-    msg.body = f"To reset your password, visit the following link: {url_for('users.reset_token', token=token, _external=True)}    .... if you did not make this request, simply ignore this email and no changes will be made"
+    msg.body = f"To reset your password, visit the following link: https://www.zennit.app/reset_password/{token}    .... if you did not make this request, simply ignore this email and no changes will be made"
     mail.send(msg)
