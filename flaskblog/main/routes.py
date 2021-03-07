@@ -24,12 +24,12 @@ class PostSchema(ma.Schema):
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)
 
-@main.route("/")
-def to_react():
-    return current_app.send_static_file('index.html')
-
 @main.errorhandler(404)
 def not_found(e):
+    return current_app.send_static_file('index.html')
+
+@main.route("/")
+def to_react():
     return current_app.send_static_file('index.html')
 
 @main.route("/api/posts")
