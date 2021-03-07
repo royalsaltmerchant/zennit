@@ -17,6 +17,9 @@ psycopg2 = "*"
 flask-migrate = "*"
 python-dotenv = "*"
 boto3 = "*"
+flask-marshmallow = "*"
+marshmallow-sqlalchemy = "*"
+pyjwt = "==2.0.1"
 
 [dev-packages]
 
