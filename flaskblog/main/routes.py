@@ -24,12 +24,12 @@ class PostSchema(ma.Schema):
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
+@main.route('/', defaults={'path': ''})
+@main.route('/<path:path>')
 def catch_all(path):
     return app.send_static_file('index.html')
 
-@app.errorhandler(404)   
+@main.errorhandler(404)   
 def not_found(e):   
   return app.send_static_file('index.html')
 
