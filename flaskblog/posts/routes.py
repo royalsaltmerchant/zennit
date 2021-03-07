@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect, request, abort, Blueprint, Response, jsonify
+from flask import render_template, url_for, flash, redirect, request, abort, Blueprint, Response, jsonify, current_app
 from flaskblog import db, ma 
 from flaskblog.models import Post, User
 from flaskblog.users.routes import token_required
@@ -16,6 +16,10 @@ class PostSchema(ma.Schema):
 
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)
+
+@posts.errorhandler(404)
+def not_found(e):
+    return current_app.send_static_file('index.html')
 
 @posts.route('/api/new_post', methods=['Get', 'POST'])
 @token_required

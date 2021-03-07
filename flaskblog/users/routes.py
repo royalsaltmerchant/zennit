@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect, request, Blueprint, Response, jsonify
+from flask import render_template, url_for, flash, redirect, request, Blueprint, Response, jsonify, current_app
 from flaskblog import db, bcrypt, ma
 from flaskblog.models import User, Post
 from flaskblog.users.utils import save_picture, send_reset_email
@@ -17,6 +17,10 @@ class UserSchema(ma.Schema):
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
+
+@users.errorhandler(404)
+def not_found(e):
+    return current_app.send_static_file('index.html')
 
 @users.route('/api/register', methods=['GET', 'POST'])
 def api_register():
