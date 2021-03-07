@@ -28,6 +28,10 @@ posts_schema = PostSchema(many=True)
 def to_react():
     return current_app.send_static_file('index.html')
 
+@app.errorhandler(404)
+def not_found(e):
+    return current_app.send_static_file('index.html')
+
 @main.route("/api/posts")
 def posts():
     posts = Post.query.order_by(Post.date_posted.desc())
