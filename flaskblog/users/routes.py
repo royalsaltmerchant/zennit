@@ -18,10 +18,6 @@ class UserSchema(ma.Schema):
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
-@users.errorhandler(404)
-def not_found(e):
-    return current_app.send_static_file('index.html')
-
 @users.route('/api/register', methods=['GET', 'POST'])
 def api_register():
     data = json.loads(request.data)

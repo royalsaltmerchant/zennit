@@ -17,10 +17,6 @@ class PostSchema(ma.Schema):
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)
 
-@posts.errorhandler(404)
-def not_found(e):
-    return current_app.send_static_file('index.html')
-
 @posts.route('/api/new_post', methods=['Get', 'POST'])
 @token_required
 def api_new_post(current_user):
