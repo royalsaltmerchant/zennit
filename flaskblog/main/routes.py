@@ -27,11 +27,11 @@ posts_schema = PostSchema(many=True)
 @main.route('/', defaults={'path': ''})
 @main.route('/<path:path>')
 def catch_all(path):
-    return app.send_static_file('index.html')
+    return current_app.send_static_file('index.html')
 
 @main.errorhandler(404)   
 def not_found(e):   
-  return app.send_static_file('index.html')
+  return current_app.send_static_file('index.html')
 
 @main.route("/api/posts")
 def posts():
