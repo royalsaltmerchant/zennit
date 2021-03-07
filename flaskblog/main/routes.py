@@ -28,7 +28,7 @@ posts_schema = PostSchema(many=True)
 def to_react():
     return current_app.send_static_file('index.html')
 
-@app.errorhandler(404)
+@main.errorhandler(404)
 def not_found(e):
     return current_app.send_static_file('index.html')
 
