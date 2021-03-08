@@ -13,12 +13,13 @@ class PostSchema(ma.Schema):
         # Fields to expose
         fields = (
             "id", 
-            "title", 
             "date_posted", 
             "content", 
             "user_id",
             "user.username",
-            "user.image_file"
+            "user.image_file",
+            "post_id",
+            "post.title"
             )
 
 post_schema = PostSchema()

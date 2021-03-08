@@ -71,7 +71,7 @@ def api_delete_post(current_user):
         db.session.commit()
 
         return Response(
-            response='Post has been delete',
+            response='Post has been deleted',
             status=200
             )
     except:
