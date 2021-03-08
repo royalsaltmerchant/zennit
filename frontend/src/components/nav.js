@@ -47,6 +47,13 @@ export default class Navigation extends Component {
       <div>
         <Navbar expand="md" bg="color" variant="dark" collapseOnSelect>
           <Container>
+            <img
+              width={30}
+              height={30}
+              className="zencircle"
+              src={`https://zennitapp.s3.amazonaws.com/zencircle.png`}
+              alt="zennit zen circle"
+            />
             <Navbar.Brand as={Link} className="mr-4" to="/home">Zennit</Navbar.Brand>
             <Navbar.Toggle aria-controls="navbarToggle" />
             <Navbar.Collapse id="navbarToggle">
@@ -54,9 +61,9 @@ export default class Navigation extends Component {
                 <NavItem>
                   <Nav.Link as={Link} to="/home">Home</Nav.Link>
                 </NavItem>
-                <NavItem>
+                {/* <NavItem>
                   <Nav.Link as={Link} to="/about">About</Nav.Link>
-                </NavItem>
+                </NavItem> */}
               </Nav>
               {/* <!-- Navbar Right Side --> */}
               {this.renderNavbarAccountOptions()}
