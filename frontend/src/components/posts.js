@@ -81,21 +81,9 @@ class Posts extends Component {
       })
       if (res.status === 200) {
         this.props.fetchComments()
-        this.setState({
-          alert: true,
-          alertType: 'success',
-          alertText: 'Comment Successfully Deleted!'
-        })
-      } else {
-        this.setState({
-          alert: true
-        })
       }
     } catch (error) {
       console.log(error.response)
-      this.setState({
-        alert: true
-      })
     }
   }
 

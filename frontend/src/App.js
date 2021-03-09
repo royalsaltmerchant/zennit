@@ -96,16 +96,16 @@ function App() {
                   {renderAlert()}
                   <Switch>
                     <Route exact path="/">
-                      <Posts alert={alert} authorization={authorization} />
+                      <Posts authorization={authorization} />
                     </Route>
                     <Route path="/home">
-                      <Posts alert={alert} authorization={authorization} />
+                      <Posts authorization={authorization} />
                     </Route>
                     <Route path="/user_posts/:username">
-                      <UserPosts />
+                      <UserPosts authorization={authorization} />
                     </Route>
                     <Route path="/post/:id">
-                      <SinglePost />
+                      <SinglePost authorization={authorization} />
                     </Route>
                     <Route path="/update/post/:id">
                       <UpdatePost />

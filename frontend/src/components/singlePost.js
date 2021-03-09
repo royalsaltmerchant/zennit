@@ -1,11 +1,15 @@
 import React, { Component } from 'react'
 import { Link, withRouter } from "react-router-dom";
 import axios from 'axios'
+
 import Proptypes from 'prop-types'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
 import { fetchPosts } from '../actions/postActions'
 import { fetchUser } from '../actions/usersActions'
+import { fetchComments } from '../actions/commentActions'
+
+import NewComment from './newComment.js'
 
 import Media from 'react-bootstrap/Media'
 import Button from 'react-bootstrap/Button'
@@ -20,26 +24,28 @@ class SinglePost extends Component {
       modalToggle: false,
       alert: false,
       alertText: 'Something went wrong, please try again later!',
-      alertType: 'warning'
+      alertType: 'warning',
+      commentsViewable: 4,
+      userIs: false
     }
   }
 
   componentDidMount() {
-    this.props.fetchPosts()
-    if(localStorage.getItem("token")) {
-      this.props.fetchUser()
-    }
+    const {fetchPosts, fetchComments} = this.props
+
+    fetchPosts()
+    fetchComments()
   }
 
-  componentDidUpdate() {
-    const {alert} = this.state
+  componentDidUpdate(prevProps) {
+    const {user, fetchUser, fetchComments, authorization, comments} = this.props
 
-    if(alert) {
-      setTimeout(() => {
-        this.setState({
-          alert: false
-        })
-      }, 5000)
+    if(prevProps.authorization !== authorization) {
+      fetchUser()
+    }
+    
+    if(prevProps.user !== user) {
+      this.renderNewComment()
     }
   }
 
@@ -100,6 +106,85 @@ class SinglePost extends Component {
     return <small className="text-muted">{formattedDate}</small>
   }
 
+  async handleDeleteComment(id) {
+    try {
+      const res = await axios({
+        headers: {
+          "x-access-token": localStorage.getItem("token")
+        },
+        method: 'post',
+        url: '/api/delete_comment',
+        data: {
+          comment_id: id
+        }
+      })
+      if (res.status === 200) {
+        this.props.fetchComments()
+      } 
+    } catch (error) {
+      console.log(error.response)
+    }
+  }
+
+  renderNewComment(post) {
+    const {user} = this.props
+
+      if(Object.keys(user).length !== 0) {
+        return(
+          <NewComment post={post} user={user} />
+        )
+      }
+  }
+
+  renderCommentsLength(post) {
+    const {comments} = this.props
+    const commentsById = comments.filter((comment) => {
+      if(comment.post_id == post) {
+        return true
+      }
+    })
+    return <p>Comments({commentsById.length})</p>
+  }
+
+  renderCommentEditButtons(commentUser, id) {
+    const {username} = this.props.user
+
+    if(username === commentUser && localStorage.getItem("token")) {
+      return <Button className="ml-auto delete-comment" onClick={() => this.handleDeleteComment(id)} variant="outline-danger" size="sm"><span>&times;</span></Button>
+    }
+  }
+
+  renderComments(post) {
+    const {comments} = this.props
+    const {commentsViewable} = this.state
+    const commentsById = comments.filter((comment) => {
+      if(comment.post_id == post) {
+        return true
+      }
+    })
+
+    const commentsByPost = commentsById.map(comment => (
+      <div key={comment.id}>
+        {/* <img
+            className="rounded-circle article-img"
+            src={`https://zennitapp.s3.amazonaws.com/${comment['user.image_file']}`}
+            alt="current user" 
+          /> */}
+        <div className="comment-content">
+          <div className="comment-head">
+            <Link className="mr-2" to={`/user_posts/${comment['user.username']}`}>{comment['user.username']}</Link>
+            {this.renderDatePosted(comment.date_posted)}
+            {this.renderCommentEditButtons(comment['user.username'], comment.id)}
+          </div>
+          <hr />
+          <p className="article-content">{comment.content}</p>
+        </div>
+      </div>
+    ))
+    
+    return commentsByPost.slice(0, commentsViewable)
+  }
+
   renderProfileImage(userImage) {
     return <img className="rounded-circle article-img" src={`https://zennitapp.s3.amazonaws.com/${userImage}`} alt="" />
   }
@@ -127,18 +212,24 @@ class SinglePost extends Component {
       }
     })
     const postItems = postsById.map(post => (
-      <Media className="content-section" key={post.id}>
-        {this.renderProfileImage(post['user.image_file'])}
-        <Media.Body>
-          <div className="article-metadata">
-            <Link className="mr-2" to={`/user_posts/${post['user.username']}`}>{post['user.username']}</Link>
-            {this.renderDatePosted(post.date_posted)}
-            {this.renderEditButtons(post['user.username'])}
-          </div>
-          <h2><Link className="article-title" to={`/post/${post.id}`}>{post.title}</Link></h2>
-          <p className="article-content">{post['content']}</p>
-        </Media.Body>
-      </Media>
+      <div key={post.id}>
+        <Media className="content-section">
+          {this.renderProfileImage(post['user.image_file'])}
+          <Media.Body>
+            <div className="article-metadata">
+              <Link className="mr-2" to={`/user_posts/${post['user.username']}`}>{post['user.username']}</Link>
+              {this.renderDatePosted(post.date_posted)}
+              {this.renderEditButtons(post['user.username'])}
+            </div>
+            <h2><Link className="article-title" to={`/post/${post.id}`}>{post.title}</Link></h2>
+            <p className="article-content">{post['content']}</p>
+          </Media.Body>
+        </Media>
+        {this.renderCommentsLength(post.id)}
+        {this.renderComments(post.id)}
+        {this.renderNewComment(post.id)}
+        <hr />
+      </div>
       ))
     return postItems
   }
@@ -173,12 +264,14 @@ class SinglePost extends Component {
 SinglePost.propTypes = {
   fetchPosts: Proptypes.func.isRequired,
   posts: Proptypes.array.isRequired,
-  fetchUser: Proptypes.func.isRequired
+  fetchUser: Proptypes.func.isRequired,
+  fetchComments: Proptypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
   posts: state.posts.items,
-  user: state.users.item
+  user: state.users.item,
+  comments: state.comments.items
 })
 
-export default compose(withRouter,connect(mapStateToProps, { fetchPosts, fetchUser }))(SinglePost)
+export default compose(withRouter, connect(mapStateToProps, { fetchPosts, fetchUser, fetchComments }))(SinglePost)
