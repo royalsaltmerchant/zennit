@@ -16,7 +16,8 @@ class CommentSchema(ma.Schema):
             "id", 
             "title", 
             "date_posted", 
-            "content", 
+            "content",
+            "post_id",
             "user_id",
             "user.username",
             "user.image_file"
@@ -25,7 +26,7 @@ class CommentSchema(ma.Schema):
 comment_schema = CommentSchema()
 comments_schema = CommentSchema(many=True)
 
-@comments.route("/api/comments")
+@comments.route("/api/comments", methods=['GET'])
 def api_comments():
     all_comments = Comment.query.order_by(Comment.date_posted.desc())
 
@@ -38,7 +39,7 @@ def api_comments():
 
     return response
 
-@comments.route("/api/new_comment")
+@comments.route("/api/new_comment", methods=['POST'])
 @token_required
 def new_comment(current_user):
     try:

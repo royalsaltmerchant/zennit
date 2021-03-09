@@ -10,7 +10,6 @@ export const fetchUser = () => dispatch => {
     }
   })
   .then(res => {
-    console.log(res)
     dispatch({
       type: FETCH_USER,
       payload: res.data

@@ -19,7 +19,7 @@ class PostSchema(ma.Schema):
             "user.username",
             "user.image_file",
             "post_id",
-            "post.title"
+            "title"
             )
 
 post_schema = PostSchema()

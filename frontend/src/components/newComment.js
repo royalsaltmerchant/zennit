@@ -3,11 +3,13 @@ import axios from 'axios'
 
 import Proptypes from 'prop-types'
 import { connect } from 'react-redux'
-import { fetchUser } from '../actions/usersActions'
+import { fetchComments } from '../actions/commentActions'
 
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Alert from 'react-bootstrap/Alert'
+import Media from 'react-bootstrap/Media'
+import Row from 'react-bootstrap/Row'
 import '../main.css'
 
 class NewComment extends Component {
@@ -21,14 +23,11 @@ class NewComment extends Component {
     }
   }
 
-  componentDidMount() {
-    this.props.fetchUser()
-  }
-
   async handleSubmit(event) {
-    const {post} = this.props.post
-    const content = event.target.content.value.trim()
+    const {post} = this.props
+    const content = event.target.comment.value.trim()
 
+    event.preventDefault()
     try {
       const res = await axios({
         headers: {
@@ -41,9 +40,13 @@ class NewComment extends Component {
           content: content
         }
       })
-      console.log(res)
       if (res.status === 201) {
-        console.log(res)
+        this.props.fetchComments()
+        this.setState({
+          alert: true,
+          alertType: 'success',
+          alertText: 'Comment Successfully Created!'
+        })
       } else {
         this.setState({
           alert: true
@@ -60,12 +63,16 @@ class NewComment extends Component {
           })
         } else if(error.response.status === 500) {
           this.setState({
-            alert: true
+            alert: true,
+            alertType: 'warning',
+            alertText: 'Something went wrong, please try again later!'
           })
         }
       } else {
         this.setState({
-          alert: true
+          alert: true,
+          alertType: 'warning',
+          alertText: 'Something went wrong, please try again later!'
         })
       }
     }
@@ -95,38 +102,39 @@ class NewComment extends Component {
 
     return (
       <div>
-        {this.renderAlert}
-        <img 
-          width={30}
-          height={30}
-          className="rounded-circle article-img"
-          src={`https://zennitapp.s3.amazonaws.com/${user.image_file}`}
-          alt="current user" 
-        />
-        <Form onSubmit={(event) => this.handleSubmit(event)}>
-          <Form.Group controlId="comment">
-            <Form.Label>Comment</Form.Label>
-            <Form.Control
-              as="textarea"
-              size="md"
-              type="comment" 
-              placeholder="Dharma comment..." />
-          </Form.Group>
-          <Button variant="outline-info" type="submit">
-            Comment
-          </Button>
-        </Form>
+        {this.renderAlert()}
+        <Media>
+          <img
+            className="rounded-circle article-img"
+            src={`https://zennitapp.s3.amazonaws.com/${user.image_file}`}
+            alt="current user" 
+          />
+          <Form onSubmit={(event) => this.handleSubmit(event)}>
+            <Form.Group controlId="comment">
+              <Form.Control
+                required
+                as="textarea"
+                size="md"
+                cols="55"
+                type="comment" 
+                placeholder="Expound the dharma..." />
+            </Form.Group>
+            <Button variant="outline-info" type="submit">
+              Comment
+            </Button>
+          </Form>
+        </Media>
       </div>
     )
   }
 }
 
 NewComment.propTypes = {
-  fetchUser: Proptypes.func.isRequired,
+  fetchComments: Proptypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
-  user: state.users.item
+  comments: state.comments.items
 })
 
-export default connect(mapStateToProps, { fetchUser })(NewComment)
+export default connect(mapStateToProps, { fetchComments })(NewComment)

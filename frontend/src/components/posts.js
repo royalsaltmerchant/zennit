@@ -1,27 +1,46 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom";
+import axios from 'axios'
 
 import Proptypes from 'prop-types'
 import { connect } from 'react-redux'
 import { fetchPosts } from '../actions/postActions'
 import { fetchUser } from '../actions/usersActions'
+import { fetchComments } from '../actions/commentActions'
 
 import NewComment from './newComment.js'
 
 import Media from 'react-bootstrap/Media'
+import Button from 'react-bootstrap/Button'
 import '../main.css'
 
 class Posts extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      postsViewable: 4
+      postsViewable: 4,
+      commentsViewable: 4,
+      userIs: false
     }
   }
 
   componentDidMount() {
-    this.props.fetchPosts()
-    this.props.fetchUser()
+    const {fetchPosts, fetchComments} = this.props
+
+    fetchPosts()
+    fetchComments()
+  }
+
+  componentDidUpdate(prevProps) {
+    const {user, fetchUser, fetchComments, authorization, comments} = this.props
+
+    if(prevProps.authorization !== authorization) {
+      fetchUser()
+    }
+    
+    if(prevProps.user !== user) {
+      this.renderNewComment()
+    }
   }
 
   renderDatePosted(date) {
@@ -48,16 +67,93 @@ class Posts extends Component {
     }
   }
 
+  async handleDeleteComment(id) {
+    try {
+      const res = await axios({
+        headers: {
+          "x-access-token": localStorage.getItem("token")
+        },
+        method: 'post',
+        url: '/api/delete_comment',
+        data: {
+          comment_id: id
+        }
+      })
+      if (res.status === 200) {
+        this.props.fetchComments()
+        this.setState({
+          alert: true,
+          alertType: 'success',
+          alertText: 'Comment Successfully Deleted!'
+        })
+      } else {
+        this.setState({
+          alert: true
+        })
+      }
+    } catch (error) {
+      console.log(error.response)
+      this.setState({
+        alert: true
+      })
+    }
+  }
+
   renderNewComment(post) {
     const {user} = this.props
 
-    if(user) {
-      return(
-        <div className="content-section">
-          <NewComment post={post}></NewComment>
-        </div>
-      )
+      if(Object.keys(user).length !== 0) {
+        return(
+          <NewComment post={post} user={user} />
+        )
+      }
+  }
+
+  renderCommentsLength(post) {
+    const {comments} = this.props
+    const commentsById = comments.filter((comment) => {
+      if(comment.post_id == post) {
+        return true
+      }
+    })
+    return <p>Comments({commentsById.length})</p>
+  }
+
+  renderCommentEditButtons(commentUser, id) {
+    const {username} = this.props.user
+
+    if(username === commentUser && localStorage.getItem("token")) {
+      return <Button className="ml-3" onClick={() => this.handleDeleteComment(id)} variant="outline-danger" size="sm"><span>&times;</span></Button>
     }
+  }
+
+  renderComments(post) {
+    const {comments} = this.props
+    const {commentsViewable} = this.state
+    const commentsById = comments.filter((comment) => {
+      if(comment.post_id == post) {
+        return true
+      }
+    })
+
+    const commentsByPost = commentsById.map(comment => (
+      <Media key={comment.id}>
+        {/* <img
+            className="rounded-circle article-img"
+            src={`https://zennitapp.s3.amazonaws.com/${comment['user.image_file']}`}
+            alt="current user" 
+          /> */}
+        <div className="comment-content">
+          <Link className="mr-2" to={`/user_posts/${comment['user.username']}`}>{comment['user.username']}</Link>
+          {this.renderDatePosted(comment.date_posted)}
+          {this.renderCommentEditButtons(comment['user.username'], comment.id)}
+          <hr />
+          <p>{comment.content}</p>
+        </div>
+      </Media>
+    ))
+    
+    return commentsByPost.slice(0, commentsViewable)
   }
 
   renderProfileImage(userImage) {
@@ -66,9 +162,10 @@ class Posts extends Component {
 
   renderPostContent() {
     const {postsViewable} = this.state
+    const {comments} = this.props
     const postItems = this.props.posts.map(post => (
-      <div>
-        <Media className="content-section" key={post.id}>
+      <div key={post.id}>
+        <Media className="content-section">
           {this.renderProfileImage(post['user.image_file'])}
           <Media.Body>
             <div className="article-metadata">
@@ -79,7 +176,10 @@ class Posts extends Component {
             {this.renderArticleContent(post.content, post.id)}
           </Media.Body>
         </Media>
+        {this.renderCommentsLength(post.id)}
+        {this.renderComments(post.id)}
         {this.renderNewComment(post.id)}
+        <hr />
       </div>
       ))
     return postItems.slice(0, postsViewable)
@@ -101,7 +201,6 @@ class Posts extends Component {
     
     return (
       <div className="scrolling" onScroll={(event) => this.renderMorePosts(event)}>
-        <h1>Home</h1>
         {this.renderPostContent()}
       </div>
     )
@@ -111,12 +210,14 @@ class Posts extends Component {
 Posts.propTypes = {
   fetchPosts: Proptypes.func.isRequired,
   posts: Proptypes.array.isRequired,
-  fetchUser: Proptypes.func.isRequired
+  fetchUser: Proptypes.func.isRequired,
+  fetchComments: Proptypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
   posts: state.posts.items,
-  user: state.users.item
+  user: state.users.item,
+  comments: state.comments.items
 })
 
-export default connect(mapStateToProps, { fetchPosts, fetchUser })(Posts)
+export default connect(mapStateToProps, { fetchPosts, fetchUser, fetchComments })(Posts)

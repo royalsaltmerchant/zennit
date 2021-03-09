@@ -66,26 +66,22 @@ def api_login():
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = None
-
-        if 'x-access-token' in request.headers:
+        if request.headers["x-access-token"] != "null":
             req_token = request.headers["x-access-token"]
             token_split = req_token.split(' ')
             token = token_split[1]
+            try:
+                verification = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS256"])
+                current_user = db.session.query(User).filter_by(id=verification['user_id']).first()
+            except:
+                raise
+                return jsonify({'message': 'Invalid token or user'})
 
-        if not token:
-            raise
+        else:
             return Response(
             response='No token passed',
             status=400
         )
-
-        try:
-            verification = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS256"])
-            current_user = db.session.query(User).filter_by(id=verification['user_id']).first()
-        except:
-            raise
-            return jsonify({'message': 'Invalid token or user'})
 
         return f(current_user, *args, **kwargs)
     return decorated

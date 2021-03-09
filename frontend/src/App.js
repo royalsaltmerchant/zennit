@@ -51,7 +51,7 @@ function App() {
         localStorage.removeItem("loginMessage")
       }, 5000)
       return(
-        <Alert variant="success">
+        <Alert className="alert-home" variant="success">
           {alertText}
         </Alert>
       )
@@ -70,7 +70,6 @@ function App() {
             "x-access-token": localStorage.getItem("token")
           }
         })
-        console.log(res)
         if(res.status === 200) {
           setAuthorization(true)
           setAlert(true)
@@ -97,10 +96,10 @@ function App() {
                   {renderAlert()}
                   <Switch>
                     <Route exact path="/">
-                      <Posts alert={alert}/>
+                      <Posts alert={alert} authorization={authorization} />
                     </Route>
                     <Route path="/home">
-                      <Posts alert={alert}/>
+                      <Posts alert={alert} authorization={authorization} />
                     </Route>
                     <Route path="/user_posts/:username">
                       <UserPosts />
