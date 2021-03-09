@@ -34,6 +34,15 @@
     margin-top: 20px;
     margin-bottom: 20px;
   }
+
+  .comment-head {
+    display: flex;
+    align-items: center;
+  }
+
+  .delete-comment {
+    font-size: 10px;
+  }
   
   .article-title {
     color: #444444;

@@ -123,7 +123,7 @@ class Posts extends Component {
     const {username} = this.props.user
 
     if(username === commentUser && localStorage.getItem("token")) {
-      return <Button className="ml-3" onClick={() => this.handleDeleteComment(id)} variant="outline-danger" size="sm"><span>&times;</span></Button>
+      return <Button className="ml-auto delete-comment" onClick={() => this.handleDeleteComment(id)} variant="outline-danger" size="sm"><span>&times;</span></Button>
     }
   }
 
@@ -137,20 +137,22 @@ class Posts extends Component {
     })
 
     const commentsByPost = commentsById.map(comment => (
-      <Media key={comment.id}>
+      <div key={comment.id}>
         {/* <img
             className="rounded-circle article-img"
             src={`https://zennitapp.s3.amazonaws.com/${comment['user.image_file']}`}
             alt="current user" 
           /> */}
         <div className="comment-content">
-          <Link className="mr-2" to={`/user_posts/${comment['user.username']}`}>{comment['user.username']}</Link>
-          {this.renderDatePosted(comment.date_posted)}
-          {this.renderCommentEditButtons(comment['user.username'], comment.id)}
+          <div className="comment-head">
+            <Link className="mr-2" to={`/user_posts/${comment['user.username']}`}>{comment['user.username']}</Link>
+            {this.renderDatePosted(comment.date_posted)}
+            {this.renderCommentEditButtons(comment['user.username'], comment.id)}
+          </div>
           <hr />
-          <p>{comment.content}</p>
+          <p className="article-content">{comment.content}</p>
         </div>
-      </Media>
+      </div>
     ))
     
     return commentsByPost.slice(0, commentsViewable)
