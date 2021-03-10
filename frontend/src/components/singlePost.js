@@ -143,7 +143,7 @@ class SinglePost extends Component {
         return true
       }
     })
-    return <p>Comments({commentsById.length})</p>
+    return <p id="comment-length">Comments({commentsById.length})</p>
   }
 
   renderCommentEditButtons(commentUser, id) {
@@ -171,7 +171,7 @@ class SinglePost extends Component {
             alt="current user" 
           /> */}
         <div className="comment-content">
-          <div className="comment-head">
+          <div className="comment-head" id="comment-head">
             <Link className="mr-2" to={`/user_posts/${comment['user.username']}`}>{comment['user.username']}</Link>
             {this.renderDatePosted(comment.date_posted)}
             {this.renderCommentEditButtons(comment['user.username'], comment.id)}
@@ -182,7 +182,8 @@ class SinglePost extends Component {
       </div>
     ))
     
-    return commentsByPost.slice(0, commentsViewable)
+    // return commentsByPost.slice(0, commentsViewable)
+    return commentsByPost
   }
 
   renderProfileImage(userImage) {

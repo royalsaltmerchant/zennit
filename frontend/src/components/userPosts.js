@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
+import { HashLink as Link } from 'react-router-hash-link'
 import axios from 'axios'
 
 import Proptypes from 'prop-types'
@@ -105,7 +106,11 @@ class UserPosts extends Component {
         return true
       }
     })
-    return <p>Comments({commentsById.length})</p>
+    return(
+      <div className="mb-3">
+        <Link to={`/post/${post}#comment-length`}>Comments({commentsById.length})</Link>
+      </div>
+    )
   }
 
   renderCommentEditButtons(commentUser, id) {
