@@ -9,6 +9,7 @@ import { fetchUser } from '../actions/usersActions'
 import { fetchComments } from '../actions/commentActions'
 
 import NewComment from './newComment.js'
+import LikeButton from './likeButton.js'
 
 import Media from 'react-bootstrap/Media'
 import Button from 'react-bootstrap/Button'
@@ -160,7 +161,10 @@ class Posts extends Component {
     const postItems = this.props.posts.map(post => (
       <div key={post.id}>
         <Media className="content-section">
-          {this.renderProfileImage(post['user.image_file'])}
+          <div style={{display: 'flex', flexDirection: 'column'}}>
+            {this.renderProfileImage(post['user.image_file'])}
+            {/* <LikeButton post={post.id}/> */}
+          </div>
           <Media.Body>
             <div className="article-metadata">
               <Link className="mr-2" to={`/user_posts/${post['user.username']}`}>{post['user.username']}</Link>
