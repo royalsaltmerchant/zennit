@@ -50,4 +50,9 @@ class Comment(db.Model):
 class Like(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
-    post = db.relationship(Post, backref='Reaction', lazy=True)
+    post = db.relationship(Post, backref='like', lazy=True)
+
+class Dislike(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    post = db.relationship(Post, backref='Dislike', lazy=True)

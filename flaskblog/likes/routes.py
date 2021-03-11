@@ -46,7 +46,7 @@ def api_add_like():
 
         like_serialized = like_schema.dump(like)
         response = Response(
-            response=json.dumps(user_serialized),
+            response=json.dumps(like_serialized),
             status=201,
             mimetype='application/json'
         )

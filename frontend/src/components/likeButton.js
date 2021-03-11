@@ -28,7 +28,7 @@ export default function LikeButton(props) {
     }
   }
 
-  function handleUnLike() {
+  function handleDislike() {
 
   }
 
@@ -37,7 +37,7 @@ export default function LikeButton(props) {
       return(
         <div className="like-buttons">
           <div style={{color: 'purple'}} onClick={() => handleLike()}><FontAwesomeIcon icon={faArrowAltCircleUp} size="2x" /></div>
-          <div onClick={() => handleUnLike()}><FontAwesomeIcon icon={faArrowAltCircleDown} size="2x" /></div>
+          <div onClick={() => handleDislike()}><FontAwesomeIcon icon={faArrowAltCircleDown} size="2x" /></div>
         </div>
       )
     } else if(like === 'unlike') {
@@ -51,7 +51,7 @@ export default function LikeButton(props) {
       return(
         <div className="like-buttons">
           <div onClick={() => handleLike()}><FontAwesomeIcon icon={faArrowAltCircleUp} size="2x" /></div>
-          <div onClick={() => handleUnLike()}><FontAwesomeIcon icon={faArrowAltCircleDown} size="2x" /></div>
+          <div onClick={() => handleDislike()}><FontAwesomeIcon icon={faArrowAltCircleDown} size="2x" /></div>
         </div>
       )
     }
