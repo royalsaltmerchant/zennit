@@ -76,7 +76,7 @@ function LikeButton(props) {
           url: '/api/remove_dislike'
         })
         if(res.status === 200) {
-          setLike('none')
+          setLike('like')
           fetchLikes()
           fetchDislikes()
         }
@@ -129,7 +129,7 @@ function LikeButton(props) {
           url: '/api/remove_like'
         })
         if(res.status === 200) {
-          setLike('none')
+          setLike('dislike')
           fetchLikes()
           fetchDislikes()
         }
