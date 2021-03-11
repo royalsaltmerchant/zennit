@@ -22,10 +22,12 @@ def create_app(config_class=Config):
     mail.init_app(app)
     ma.init_app(app)
 
+    from flaskblog.likes.routes import likes
     from flaskblog.comments.routes import comments
     from flaskblog.users.routes import users
     from flaskblog.posts.routes import posts
     from flaskblog.main.routes import main
+    app.register_blueprint(likes)
     app.register_blueprint(comments)
     app.register_blueprint(users)
     app.register_blueprint(posts)
