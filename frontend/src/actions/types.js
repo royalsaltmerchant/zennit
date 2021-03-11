@@ -1,3 +1,5 @@
 export const FETCH_POSTS = 'FETCH_POSTS'
 export const FETCH_USER = 'FETCH_USER'
 export const FETCH_COMMENTS = 'FETCH_COMMENTS'
+export const FETCH_LIKES = 'FETCH_LIKES'
+export const FETCH_DISLIKES = 'FETCH_DISLIKES'

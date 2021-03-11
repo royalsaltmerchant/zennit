@@ -163,7 +163,7 @@ class Posts extends Component {
         <Media className="content-section">
           <div style={{display: 'flex', flexDirection: 'column'}}>
             {this.renderProfileImage(post['user.image_file'])}
-            {/* <LikeButton post={post.id}/> */}
+            <LikeButton post={post.id}/>
           </div>
           <Media.Body>
             <div className="article-metadata">
