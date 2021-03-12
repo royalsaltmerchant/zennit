@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import '../main.css'
 
-export default class About extends Component {
+export default class Rules extends Component {
   render() {
     return (
       <div>

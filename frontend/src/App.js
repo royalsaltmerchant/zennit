@@ -24,6 +24,7 @@ import UpdatePost from './components/updatePost.js'
 import ForgotPassword from './components/forgotPassword.js'
 import ResetPassword from './components/resetPassword.js'
 import Rules from './components/rules.js'
+import Resources from './components/resources.js'
 
 import './main.css'
 
@@ -116,6 +117,9 @@ function App() {
                     </Route>
                     <Route path="/rules">
                       <Rules />
+                    </Route>
+                    <Route path="/resources">
+                      <Resources />
                     </Route>
                     <Route path="/account">
                       <Account />
