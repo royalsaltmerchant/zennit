@@ -11,6 +11,7 @@ import { fetchUser } from '../actions/usersActions'
 import { fetchComments } from '../actions/commentActions'
 
 import NewComment from './newComment.js'
+import LikeButton from './likeButton.js'
 
 import Media from 'react-bootstrap/Media'
 import Button from 'react-bootstrap/Button'
@@ -156,6 +157,15 @@ class UserPosts extends Component {
     return <img className="rounded-circle article-img" src={`https://zennitapp.s3.amazonaws.com/${userImage}`} alt="" />
   }
 
+  renderLikeButtons(post) {
+    const {user} = this.props
+    if(Object.keys(user).length !== 0) {
+      return(
+        <LikeButton post={post.id}/>
+      )
+    }
+  }
+
   renderPostContent() {
     const {postsViewable} = this.state
     const {username} = this.props.match.params
@@ -168,7 +178,10 @@ class UserPosts extends Component {
     const postItems = userPosts.map(post => (
       <div key={post.id}>
         <Media className="content-section">
-          {this.renderProfileImage(post['user.image_file'])}
+          <div style={{display: 'flex', flexDirection: 'column'}}>
+            {this.renderProfileImage(post['user.image_file'])}
+            {this.renderLikeButtons(post)}
+          </div>
           <Media.Body>
             <div className="article-metadata">
               <Link className="mr-2" to={`/user_posts/${post['user.username']}`}>{post['user.username']}</Link>
@@ -200,10 +213,14 @@ class UserPosts extends Component {
   }
 
   render() {
-    
+    const {username} = this.props.match.params
+
     return (
-      <div className="scrolling" onScroll={(event) => this.renderMorePosts(event)}>
-        {this.renderPostContent()}
+      <div>
+        <h1>{username}</h1>
+        <div className="scrolling" onScroll={(event) => this.renderMorePosts(event)}>
+          {this.renderPostContent()}
+        </div>
       </div>
     )
   }

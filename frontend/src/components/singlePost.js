@@ -10,6 +10,7 @@ import { fetchUser } from '../actions/usersActions'
 import { fetchComments } from '../actions/commentActions'
 
 import NewComment from './newComment.js'
+import LikeButton from './likeButton.js'
 
 import Media from 'react-bootstrap/Media'
 import Button from 'react-bootstrap/Button'
@@ -204,6 +205,15 @@ class SinglePost extends Component {
     }
   }
 
+  renderLikeButtons(post) {
+    const {user} = this.props
+    if(Object.keys(user).length !== 0) {
+      return(
+        <LikeButton post={post.id}/>
+      )
+    }
+  }
+
   renderPostContent() {
     const {id} = this.props.match.params
     const {posts} = this.props
@@ -215,7 +225,10 @@ class SinglePost extends Component {
     const postItems = postsById.map(post => (
       <div key={post.id}>
         <Media className="content-section">
-          {this.renderProfileImage(post['user.image_file'])}
+          <div style={{display: 'flex', flexDirection: 'column'}}>
+            {this.renderProfileImage(post['user.image_file'])}
+            {this.renderLikeButtons(post)}
+          </div>
           <Media.Body>
             <div className="article-metadata">
               <Link className="mr-2" to={`/user_posts/${post['user.username']}`}>{post['user.username']}</Link>
