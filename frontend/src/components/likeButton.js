@@ -5,6 +5,8 @@ import axios from 'axios';
 import Proptypes from 'prop-types'
 import { connect } from 'react-redux'
 import { fetchLikes, fetchDislikes } from '../actions/likesActions'
+import { fetchUser } from '../actions/usersActions'
+
 
 function LikeButton(props) {
   const [like, setLike] = useState('none')
@@ -13,10 +15,12 @@ function LikeButton(props) {
     const {likes, dislikes, fetchLikes, fetchDislikes} = props
     fetchLikes()
     fetchDislikes()
+    fetchUser()
   }, [])
 
+
   function renderLikesAmount() {
-    const {likes, dislikes, fetchLikes, fetchDislikes, post} = props
+    const {likes, dislikes, post} = props
     const likesById = likes.filter((like) => {
       if(like.post_id == post) {
         return true
@@ -39,6 +43,9 @@ function LikeButton(props) {
     if(like === 'none' || like === 'dislike') {
       try {
         const res = await axios({
+          headers: {
+            "x-access-token": localStorage.getItem("token")
+          },
           method: 'post',
           url: '/api/add_like',
           data: {
@@ -57,6 +64,9 @@ function LikeButton(props) {
     if(like === 'like') {
       try {
         const res = await axios({
+          headers: {
+            "x-access-token": localStorage.getItem("token")
+          },
           method: 'post',
           url: '/api/remove_like'
         })
@@ -72,6 +82,9 @@ function LikeButton(props) {
     if(like === 'dislike') {
       try {
         const res = await axios({
+          headers: {
+            "x-access-token": localStorage.getItem("token")
+          },
           method: 'post',
           url: '/api/remove_dislike'
         })
@@ -92,6 +105,9 @@ function LikeButton(props) {
     if(like === 'none' || like === 'like') {
       try {
         const res = await axios({
+          headers: {
+            "x-access-token": localStorage.getItem("token")
+          },
           method: 'post',
           url: '/api/add_dislike',
           data: {
@@ -110,6 +126,9 @@ function LikeButton(props) {
     if(like === 'dislike') {
       try {
         const res = await axios({
+          headers: {
+            "x-access-token": localStorage.getItem("token")
+          },
           method: 'post',
           url: '/api/remove_dislike'
         })
@@ -125,6 +144,9 @@ function LikeButton(props) {
     if(like === 'like') {
       try {
         const res = await axios({
+          headers: {
+            "x-access-token": localStorage.getItem("token")
+          },
           method: 'post',
           url: '/api/remove_like'
         })
@@ -140,14 +162,27 @@ function LikeButton(props) {
   }
 
   function renderLikeButtons() {
-    if(like === 'like') {
+    const {likes, dislikes, user} = props
+
+    const currentUserLike = likes.filter((like) => {
+      if(like.user_id = user.id) {
+        return true
+      }
+    })
+    const currentUserDislike = dislikes.filter((dislike) => {
+      if(dislike.user_id = user.id) {
+        return true
+      }
+    })
+    
+    if(Object.keys(currentUserLike).length !== 0) {
       return(
         <div className="like-buttons">
           <div style={{color: 'purple'}} onClick={() => handleLike()}><FontAwesomeIcon icon={faArrowAltCircleUp} size="2x" /></div>
           <div onClick={() => handleDislike()}><FontAwesomeIcon icon={faArrowAltCircleDown} size="2x" /></div>
         </div>
       )
-    } else if(like === 'dislike') {
+    } else if(Object.keys(currentUserDislike).length !== 0) {
       return(
         <div className="like-buttons">
           <div onClick={() => handleLike()}><FontAwesomeIcon icon={faArrowAltCircleUp} size="2x" /></div>
@@ -178,12 +213,14 @@ LikeButton.propTypes = {
   fetchLikes: Proptypes.func.isRequired,
   likes: Proptypes.array.isRequired,
   fetchDislikes: Proptypes.func.isRequired,
-  dislikes: Proptypes.array.isRequired
+  dislikes: Proptypes.array.isRequired,
+  fetchUser: Proptypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
   likes: state.likes.likes,
-  dislikes: state.likes.dislikes
+  dislikes: state.likes.dislikes,
+  user: state.users.item,
 })
 
-export default connect(mapStateToProps, { fetchLikes, fetchDislikes })(LikeButton)
+export default connect(mapStateToProps, { fetchLikes, fetchDislikes, fetchUser })(LikeButton)

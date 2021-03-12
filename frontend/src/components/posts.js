@@ -14,6 +14,7 @@ import LikeButton from './likeButton.js'
 import Media from 'react-bootstrap/Media'
 import Button from 'react-bootstrap/Button'
 import '../main.css'
+import { faTableTennis } from '@fortawesome/free-solid-svg-icons'
 
 class Posts extends Component {
   constructor(props) {
@@ -155,15 +156,23 @@ class Posts extends Component {
     return <img className="rounded-circle article-img" src={`https://zennitapp.s3.amazonaws.com/${userImage}`} alt="" />
   }
 
+  renderLikeButtons(post) {
+    const {user} = this.props
+    if(Object.keys(user).length !== 0) {
+      return(
+        <LikeButton post={post.id}/>
+      )
+    }
+  }
+
   renderPostContent() {
     const {postsViewable} = this.state
-    const {comments} = this.props
     const postItems = this.props.posts.map(post => (
       <div key={post.id}>
         <Media className="content-section">
           <div style={{display: 'flex', flexDirection: 'column'}}>
             {this.renderProfileImage(post['user.image_file'])}
-            <LikeButton post={post.id}/>
+            {this.renderLikeButtons(post)}
           </div>
           <Media.Body>
             <div className="article-metadata">

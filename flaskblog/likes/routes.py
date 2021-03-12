@@ -1,5 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint, Response, jsonify, current_app
 from flaskblog.models import Like, Dislike
+from flaskblog.users.routes import token_required
 from flaskblog import db, bcrypt, ma
 import logging, json
 import jwt
@@ -14,6 +15,8 @@ class LikeSchema(ma.Schema):
         fields = (
             "id", 
             "post_id",
+            "user_id",
+            "user.username"
             )
 
 like_schema = LikeSchema()
@@ -25,6 +28,8 @@ class DislikeSchema(ma.Schema):
         fields = (
             "id",
             "post_id",
+            "user_id",
+            "user.username"
             )
 
 dislike_schema = DislikeSchema()
@@ -57,12 +62,13 @@ def api_dislikes():
     return response
 
 @likes.route('/api/add_like', methods=['POST'])
-def api_add_like():
+@token_required
+def api_add_like(current_user):
     try:
         data = json.loads(request.data)
         post = data['post_id']
 
-        like = Like(post_id=post)
+        like = Like(post_id=post, user_id=current_user.id)
         db.session.add(like)
         db.session.commit()
 
@@ -78,12 +84,13 @@ def api_add_like():
         raise
 
 @likes.route('/api/add_dislike', methods=['POST'])
-def api_add_dislike():
+@token_required
+def api_add_dislike(current_user):
     try:
         data = json.loads(request.data)
         post = data['post_id']
 
-        dislike = Dislike(post_id=post)
+        dislike = Dislike(post_id=post, user_id=current_user.id)
         db.session.add(dislike)
         db.session.commit()
 
@@ -99,9 +106,10 @@ def api_add_dislike():
         raise
   
 @likes.route('/api/remove_like', methods=['POST'])
-def api_remove_like():
+@token_required
+def api_remove_like(current_user):
     try:
-        like_to_delete = db.session.query(Like).first()
+        like_to_delete = db.session.query(Like).filter_by(user_id=current_user.id).first()
 
         db.session.delete(like_to_delete)
         db.session.commit()
@@ -114,9 +122,10 @@ def api_remove_like():
         raise
 
 @likes.route('/api/remove_dislike', methods=['POST'])
-def api_remove_dislike():
+@token_required
+def api_remove_dislike(current_user):
     try:
-        dislike_to_delete = db.session.query(Dislike).first()
+        dislike_to_delete = db.session.query(Dislike).filter_by(user_id=current_user.id).first()
 
         db.session.delete(dislike_to_delete)
         db.session.commit()
