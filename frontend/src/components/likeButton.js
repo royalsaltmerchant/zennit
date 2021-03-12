@@ -9,7 +9,18 @@ import { fetchUser } from '../actions/usersActions'
 
 
 function LikeButton(props) {
-  const [like, setLike] = useState('none')
+  const {likes, dislikes, user, post} = props
+
+  const currentUserLike = likes.filter((like) => {
+    if(like.user_id === user.id && like.post_id === post) {
+      return true
+    }
+  })
+  const currentUserDislike = dislikes.filter((dislike) => {
+    if(dislike.user_id === user.id && dislike.post_id === post) {
+      return true
+    }
+  })
 
   useEffect(() => {
     const {likes, dislikes, fetchLikes, fetchDislikes} = props
@@ -40,7 +51,7 @@ function LikeButton(props) {
   async function handleLike() {
     const {post, fetchLikes, fetchDislikes} = props
 
-    if(like === 'none' || like === 'dislike') {
+    if(Object.keys(currentUserLike).length === 0 || Object.keys(currentUserDislike).length !== 0) {
       try {
         const res = await axios({
           headers: {
@@ -53,15 +64,15 @@ function LikeButton(props) {
           }
         })
         if(res.status === 201) {
-          setLike('like')
           fetchLikes()
           fetchDislikes()
+          fetchUser()
         }
       } catch(error) {
         console.log(error)
       }
     }
-    if(like === 'like') {
+    if(Object.keys(currentUserLike).length !== 0) {
       try {
         const res = await axios({
           headers: {
@@ -71,15 +82,15 @@ function LikeButton(props) {
           url: '/api/remove_like'
         })
         if(res.status === 200) {
-          setLike('none')
           fetchLikes()
           fetchDislikes()
+          fetchUser()
         }
       } catch(error) {
         console.log(error)
       }
     }
-    if(like === 'dislike') {
+    if(Object.keys(currentUserDislike).length !== 0) {
       try {
         const res = await axios({
           headers: {
@@ -89,9 +100,9 @@ function LikeButton(props) {
           url: '/api/remove_dislike'
         })
         if(res.status === 200) {
-          setLike('like')
           fetchLikes()
           fetchDislikes()
+          fetchUser()
         }
       } catch(error) {
         console.log(error)
@@ -102,7 +113,7 @@ function LikeButton(props) {
   async function handleDislike() {
     const {post, fetchLikes, fetchDislikes} = props
 
-    if(like === 'none' || like === 'like') {
+    if(Object.keys(currentUserDislike).length === 0 || Object.keys(currentUserLike).length !== 0) {
       try {
         const res = await axios({
           headers: {
@@ -115,15 +126,15 @@ function LikeButton(props) {
           }
         })
         if(res.status === 201) {
-          setLike('dislike')
           fetchLikes()
           fetchDislikes()
+          fetchUser()
         }
       } catch(error) {
         console.log(error)
       }
     }
-    if(like === 'dislike') {
+    if(Object.keys(currentUserDislike).length !== 0) {
       try {
         const res = await axios({
           headers: {
@@ -133,15 +144,15 @@ function LikeButton(props) {
           url: '/api/remove_dislike'
         })
         if(res.status === 200) {
-          setLike('none')
           fetchLikes()
           fetchDislikes()
+          fetchUser()
         }
       } catch(error) {
         console.log(error)
       }
     }
-    if(like === 'like') {
+    if(Object.keys(currentUserLike).length !== 0) {
       try {
         const res = await axios({
           headers: {
@@ -151,9 +162,9 @@ function LikeButton(props) {
           url: '/api/remove_like'
         })
         if(res.status === 200) {
-          setLike('dislike')
           fetchLikes()
           fetchDislikes()
+          fetchUser()
         }
       } catch(error) {
         console.log(error)
@@ -162,19 +173,7 @@ function LikeButton(props) {
   }
 
   function renderLikeButtons() {
-    const {likes, dislikes, user} = props
 
-    const currentUserLike = likes.filter((like) => {
-      if(like.user_id = user.id) {
-        return true
-      }
-    })
-    const currentUserDislike = dislikes.filter((dislike) => {
-      if(dislike.user_id = user.id) {
-        return true
-      }
-    })
-    
     if(Object.keys(currentUserLike).length !== 0) {
       return(
         <div className="like-buttons">
