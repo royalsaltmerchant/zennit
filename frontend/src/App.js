@@ -23,6 +23,7 @@ import NewPost from './components/newPost.js'
 import UpdatePost from './components/updatePost.js'
 import ForgotPassword from './components/forgotPassword.js'
 import ResetPassword from './components/resetPassword.js'
+import Rules from './components/rules.js'
 
 import './main.css'
 
@@ -112,6 +113,9 @@ function App() {
                     </Route>
                     <Route path="/about">
                       <About />
+                    </Route>
+                    <Route path="/rules">
+                      <Rules />
                     </Route>
                     <Route path="/account">
                       <Account />
