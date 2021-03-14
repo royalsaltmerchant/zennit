@@ -26,13 +26,13 @@ import ResetPassword from './components/resetPassword.js'
 import Rules from './components/rules.js'
 import Resources from './components/resources.js'
 import SearchPosts from './components/searchPosts.js'
+import Notifications from './components/notifications.js'
 
 import './main.css'
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row'
 import Alert from 'react-bootstrap/Alert'
-
 
 function App() {
   const [authorization, setAuthorization] = useState(false)
@@ -91,6 +91,7 @@ function App() {
   return (
     <Provider store={store}>
       <Router>
+      {/* <Notifications /> */}
         <div className="main-body">
           <Navigation authorization={authorization}/>
           <Container>
