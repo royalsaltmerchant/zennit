@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from "react-router-dom";
 import axios from 'axios'
 
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
 import '../main.css'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Alert from 'react-bootstrap/Alert'
 
 export default function NewPost() {
+  const [value, setValue] = useState('')
   const [alert, setAlert] = useState(false)
   const [alertText, setAlertText] = useState('Something went wrong, please try again later!')
   const history = useHistory()
@@ -26,7 +30,7 @@ export default function NewPost() {
   async function handleSubmit(event) {
     event.preventDefault()
     const title = event.target.title.value.trim()
-    const content = event.target.content.value.trim()
+    const content = value.trim()
 
     try {
       const res = await axios({
@@ -64,6 +68,11 @@ export default function NewPost() {
     }
   }
 
+  function handleChange(e, editor) {
+    const data = editor.getData()
+    setValue(data)
+  }
+
   return (
     <div>
       {renderAlert()}
@@ -81,13 +90,17 @@ export default function NewPost() {
 
             <Form.Group controlId="content">
               <Form.Label>Content</Form.Label>
-              <Form.Control 
+              <Form.Control
                 required
-                as="textarea"
-                rows="10"
-                size="lg" 
-                type="content" 
-                placeholder="Post Content" />
+                as={CKEditor}
+                type="content"
+                editor={ClassicEditor}
+                onChange={handleChange}
+                data={value}
+                config={ {
+                  toolbar: ['heading', 'bold', 'italic', 'link', 'numberedList', 'bulletedList', 'blockQuote', ]
+                } }
+              />
             </Form.Group>
               <Button variant="outline-info" type="submit">
                 Post

@@ -24,6 +24,7 @@
     border-radius: 3px;
     margin-top: 20px;
     margin-bottom: 20px;
+    overflow-wrap: anywhere;
   }
 
   .comment-content {
@@ -114,4 +115,9 @@
   .like-buttons {
     margin: 5px;
     margin-top: 10px;
+  }
+
+  .ck-content {
+    width: 100%;
+    height: 250px;
   }

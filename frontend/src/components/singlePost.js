@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { Link, withRouter } from "react-router-dom";
 import axios from 'axios'
 
+import ReactHtmlParser from 'react-html-parser'
+
 import Proptypes from 'prop-types'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
@@ -236,7 +238,8 @@ class SinglePost extends Component {
               {this.renderEditButtons(post['user.username'])}
             </div>
             <h2><Link className="article-title" to={`/post/${post.id}`}>{post.title}</Link></h2>
-            <p className="article-content">{post['content']}</p>
+            <hr />
+            <div className="article-content">{ReactHtmlParser(post.content)}</div>
           </Media.Body>
         </Media>
         {this.renderCommentsLength(post.id)}

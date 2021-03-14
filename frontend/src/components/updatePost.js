@@ -7,6 +7,9 @@ import { compose } from 'redux'
 import { fetchPosts } from '../actions/postActions'
 import { fetchUser } from '../actions/usersActions'
 
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
 import Button from 'react-bootstrap/Button'
 import Alert from 'react-bootstrap/Alert'
 import Form from 'react-bootstrap/Form'
@@ -19,7 +22,8 @@ class UpdatePost extends Component {
       modalToggle: false,
       alert: false,
       alertText: 'Something went wrong, please try again later!',
-      alertType: 'warning'
+      alertType: 'warning',
+      value: ''
     }
   }
 
@@ -56,7 +60,7 @@ class UpdatePost extends Component {
     event.preventDefault()
     const {id} = this.props.match.params
     const title = event.target.title.value.trim()
-    const content = event.target.content.value.trim()
+    const content = this.state.value.trim()
 
     try {
       const res = await axios({
@@ -111,13 +115,17 @@ class UpdatePost extends Component {
 
             <Form.Group controlId="content">
               <Form.Label>Content</Form.Label>
-              <Form.Control 
+              <Form.Control
                 required
-                as="textarea"
-                rows="10"
-                size="lg" 
-                type="content" 
-                defaultValue={post.content} />
+                as={CKEditor}
+                type="content"
+                editor={ClassicEditor}
+                onChange={(e, editor) => this.handleChange(e, editor)}
+                data={this.state.value || post.content  }
+                config={ {
+                  toolbar: ['heading', 'bold', 'italic', 'link', 'numberedList', 'bulletedList', 'blockQuote', ]
+                } }
+              />
             </Form.Group>
               <Button variant="outline-info" type="submit">
                 Update
@@ -126,6 +134,13 @@ class UpdatePost extends Component {
         </div>
     ))
     return updatePostForm
+  }
+
+  handleChange(e, editor) {
+    const data = editor.getData()
+    this.setState({
+      value: data
+    })
   }
 
   render() {

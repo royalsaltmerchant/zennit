@@ -3,6 +3,8 @@ import { withRouter } from "react-router-dom";
 import { HashLink as Link } from 'react-router-hash-link'
 import axios from 'axios'
 
+import ReactHtmlParser from 'react-html-parser'
+
 import Proptypes from 'prop-types'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
@@ -57,15 +59,13 @@ class UserPosts extends Component {
     if (content.length > 1000) {
       return(
         <div>
-          <p className="article-content">{content.substr(0, 1000)}</p>
+          <div className="article-content">{ReactHtmlParser(content.substr(0, 1000))}</div>
           <Link className="mr-2" to={`/post/${id}`}>Read More</Link>
         </div>
       )
     } else {
       return(
-        <div>
-          <p className="article-content">{content}</p>
-        </div>
+          <div className="article-content">{ReactHtmlParser(content)}</div>
       )
     }
   }
@@ -188,6 +188,7 @@ class UserPosts extends Component {
               {this.renderDatePosted(post.date_posted)}
             </div>
             <h2><Link className="article-title" to={`/post/${post.id}`}>{post.title}</Link></h2>
+            <hr />
             {this.renderArticleContent(post.content, post.id)}
           </Media.Body>
         </Media>
