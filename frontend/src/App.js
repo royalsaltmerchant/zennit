@@ -25,6 +25,7 @@ import ForgotPassword from './components/forgotPassword.js'
 import ResetPassword from './components/resetPassword.js'
 import Rules from './components/rules.js'
 import Resources from './components/resources.js'
+import SearchPosts from './components/searchPosts.js'
 
 import './main.css'
 
@@ -102,6 +103,9 @@ function App() {
                     </Route>
                     <Route path="/home">
                       <Posts authorization={authorization} />
+                    </Route>
+                    <Route path="/search/:input">
+                      <SearchPosts />
                     </Route>
                     <Route path="/user_posts/:username">
                       <UserPosts authorization={authorization} />

@@ -15,6 +15,7 @@ import LikeButton from './likeButton.js'
 
 import Media from 'react-bootstrap/Media'
 import Button from 'react-bootstrap/Button'
+import Spinner from 'react-bootstrap/Spinner'
 import '../main.css'
 import { faTableTennis } from '@fortawesome/free-solid-svg-icons'
 
@@ -44,6 +45,16 @@ class Posts extends Component {
     
     if(prevProps.user !== user) {
       this.renderNewComment()
+    }
+  }
+
+  renderLoader() {
+    const {posts} = this.props
+
+    if(Object.keys(posts).length === 0) {
+      return(
+        <Spinner animation="border" style={{margin: '30px'}} />
+      )
     }
   }
 
@@ -209,6 +220,7 @@ class Posts extends Component {
     
     return (
       <div className="scrolling" onScroll={(event) => this.renderMorePosts(event)}>
+        {this.renderLoader()}
         {this.renderPostContent()}
       </div>
     )

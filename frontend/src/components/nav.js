@@ -1,19 +1,17 @@
 import React, { Component } from 'react'
 import '../main.css'
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavItem from 'react-bootstrap/NavItem';
 import Container from 'react-bootstrap/Container'
+import Form from 'react-bootstrap/Form'
 
-export default class Navigation extends Component {
-  constructor(props) {
-    super(props)
-    
-  }
+export default function Navigation(props) {
+  const history = useHistory()
 
-  renderNavbarAccountOptions() {
-    if(this.props.authorization) {
+  function renderNavbarAccountOptions() {
+    if(props.authorization) {
       return(
         <Nav>
           <NavItem >
@@ -42,35 +40,55 @@ export default class Navigation extends Component {
     }
   }
 
-  render() {
-    return (
-      <div>
-        <Navbar expand="md" bg="color" variant="dark" collapseOnSelect>
-          <Container>
-            <img
-              width={30}
-              height={30}
-              className="zencircle"
-              src={`https://zennitapp.s3.amazonaws.com/zencircle.png`}
-              alt="zennit zen circle"
-            />
-            <Navbar.Brand as={Link} className="mr-4" to="/home">Zennit</Navbar.Brand>
-            <Navbar.Toggle aria-controls="navbarToggle" />
-            <Navbar.Collapse id="navbarToggle">
-              <Nav className="mr-auto">
-                <NavItem>
-                  <Nav.Link as={Link} to="/home">Home</Nav.Link>
-                </NavItem>
-                {/* <NavItem>
-                  <Nav.Link as={Link} to="/about">About</Nav.Link>
-                </NavItem> */}
-              </Nav>
-              {/* <!-- Navbar Right Side --> */}
-              {this.renderNavbarAccountOptions()}
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
-      </div>
+  function handleSearch(event) {
+    event.preventDefault()
+    const search = event.target.formSearch.value
+
+    history.replace(`/search/${search}`)
+  }
+
+  function renderSearchBar() {
+    return(
+      <Form className="form-inline justify-content-center" onSubmit={(event) => handleSearch(event)}>
+        <Form.Group controlId="formSearch">
+          <Form.Control 
+            size="sm"
+            type="search" 
+            placeholder="Search posts"
+          />
+        </Form.Group>
+      </Form>
     )
   }
+
+  return (
+    <div>
+      <Navbar expand="md" bg="color" variant="dark" collapseOnSelect>
+        <Container>
+          <img
+            width={30}
+            height={30}
+            className="zencircle"
+            src={`https://zennitapp.s3.amazonaws.com/zencircle.png`}
+            alt="zennit zen circle"
+          />
+          <Navbar.Brand as={Link} className="mr-4" to="/home">Zennit</Navbar.Brand>
+          <Navbar.Toggle aria-controls="navbarToggle" />
+          <Navbar.Collapse id="navbarToggle">
+            <Nav className="mr-auto">
+              <NavItem>
+                <Nav.Link as={Link} to="/home">Home</Nav.Link>
+              </NavItem>
+              {/* <NavItem>
+                <Nav.Link as={Link} to="/about">About</Nav.Link>
+              </NavItem> */}
+            </Nav>
+            {/* <!-- Navbar Right Side --> */}
+            {renderSearchBar()}
+            {renderNavbarAccountOptions()}
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+    </div>
+  )
 }
