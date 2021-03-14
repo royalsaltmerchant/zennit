@@ -16,7 +16,7 @@ export default class Sidebar extends Component {
       <div className="col-md-4">
         <div className="content-section">
           <h3>Expedients</h3>
-          <div className='text-muted'>Currently Under Construction
+          <div className='text-muted'>
             <ListGroup>
               <ListGroup.Item>
                 <Link to="/about">About</Link>
