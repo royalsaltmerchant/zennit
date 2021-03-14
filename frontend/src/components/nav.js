@@ -54,7 +54,7 @@ export default function Navigation(props) {
           <Form.Control 
             size="sm"
             type="search" 
-            placeholder="Search posts"
+            placeholder="Search Posts"
           />
         </Form.Group>
       </Form>
