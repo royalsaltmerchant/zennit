@@ -26,7 +26,6 @@ import ResetPassword from './components/resetPassword.js'
 import Rules from './components/rules.js'
 import Resources from './components/resources.js'
 import SearchPosts from './components/searchPosts.js'
-import Notifications from './components/notifications.js'
 
 import './main.css'
 
@@ -91,7 +90,6 @@ function App() {
   return (
     <Provider store={store}>
       <Router>
-      {/* <Notifications /> */}
         <div className="main-body">
           <Navigation authorization={authorization}/>
           <Container>

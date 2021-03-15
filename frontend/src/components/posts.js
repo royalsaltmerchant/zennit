@@ -12,12 +12,12 @@ import { fetchComments } from '../actions/commentActions'
 
 import NewComment from './newComment.js'
 import LikeButton from './likeButton.js'
+import Notifications from './notifications.js'
 
 import Media from 'react-bootstrap/Media'
 import Button from 'react-bootstrap/Button'
 import Spinner from 'react-bootstrap/Spinner'
 import '../main.css'
-import { faTableTennis } from '@fortawesome/free-solid-svg-icons'
 
 class Posts extends Component {
   constructor(props) {
@@ -216,12 +216,22 @@ class Posts extends Component {
     }
   }
 
+  renderNotificationsButton() {
+    const {user} = this.props
+    if(Object.keys(user).length !== 0) {
+      return(
+        <Notifications user={this.props.user} />
+      )
+    }
+  }
+
   render() {
     
     return (
       <div className="scrolling" onScroll={(event) => this.renderMorePosts(event)}>
         {this.renderLoader()}
         {this.renderPostContent()}
+        {this.renderNotificationsButton()}
       </div>
     )
   }

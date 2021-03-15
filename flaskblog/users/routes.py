@@ -10,10 +10,38 @@ import os
 
 users = Blueprint('users', __name__)
 
-class UserSchema(ma.Schema):
+class CommentSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ("id", "username", "email", "password", "image_file")
+        fields = (
+            "id", 
+            "title", 
+            "date_posted", 
+            "content",
+            "post_id",
+            "post.title",
+            "user_id",
+            "user.username",
+            "user.image_file"
+            )
+
+comment_schema = CommentSchema()
+comments_schema = CommentSchema(many=True)
+
+class PostSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = Post
+        fields = ("id", "title", "date_posted", "content", "user_id", "comments")
+    comments = ma.Nested(CommentSchema, many=True)
+
+post_schema = PostSchema()
+posts_schema = PostSchema(many=True)
+
+class UserSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = User
+        fields = ("id", "username", "email", "password", "image_file", "posts")
+    posts = ma.Nested(PostSchema, many=True)
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
@@ -121,7 +149,6 @@ def api_verify_jwt():
 @token_required
 def get_user(current_user):
     user_serialized = user_schema.dump(current_user)
-
     return Response(
         response=json.dumps(user_serialized),
         status=200,
