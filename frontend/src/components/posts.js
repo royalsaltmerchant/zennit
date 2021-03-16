@@ -9,6 +9,7 @@ import { connect } from 'react-redux'
 import { fetchPosts } from '../actions/postActions'
 import { fetchUser } from '../actions/usersActions'
 import { fetchComments } from '../actions/commentActions'
+import { fetchNotifications } from '../actions/notificationActions'
 
 import NewComment from './newComment.js'
 import LikeButton from './likeButton.js'
@@ -30,10 +31,11 @@ class Posts extends Component {
   }
 
   componentDidMount() {
-    const {fetchPosts, fetchComments} = this.props
+    const {fetchPosts, fetchComments, fetchNotifications} = this.props
 
     fetchPosts()
     fetchComments()
+    fetchNotifications()
   }
 
   componentDidUpdate(prevProps) {
@@ -216,10 +218,10 @@ class Posts extends Component {
   }
 
   renderNotificationsButton() {
-    const {user} = this.props
+    const {user, notifications, fetchNotifications} = this.props
     if(Object.keys(user).length !== 0) {
       return(
-        <Notifications user={user} />
+        <Notifications user={user} notifications={notifications} fetchNotifications={fetchNotifications} />
       )
     }
   }
@@ -228,7 +230,7 @@ class Posts extends Component {
     
     return (
       <div>
-        {/* {this.renderNotificationsButton()} */}
+        {this.renderNotificationsButton()}
         <div className="scrolling" onScroll={(event) => this.renderMorePosts(event)}>
           {this.renderLoader()}
           {this.renderPostContent()}
@@ -242,13 +244,15 @@ Posts.propTypes = {
   fetchPosts: Proptypes.func.isRequired,
   posts: Proptypes.array.isRequired,
   fetchUser: Proptypes.func.isRequired,
-  fetchComments: Proptypes.func.isRequired
+  fetchComments: Proptypes.func.isRequired,
+  fetchNotifications: Proptypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
   posts: state.posts.items,
   user: state.users.item,
-  comments: state.comments.items
+  comments: state.comments.items,
+  notifications: state.notifications.items
 })
 
-export default connect(mapStateToProps, { fetchPosts, fetchUser, fetchComments })(Posts)
+export default connect(mapStateToProps, { fetchPosts, fetchUser, fetchComments, fetchNotifications })(Posts)

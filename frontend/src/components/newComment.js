@@ -23,6 +23,30 @@ class NewComment extends Component {
     }
   }
 
+  async makeNotification(data) {
+    const comment = data.id
+    const post = data.post_id
+    const user = data.user_id
+
+    try {
+      const res = await axios({
+        method: 'post',
+        url: '/api/new_notification',
+        data: {
+          notification_type: 'comment',
+          user_id: user,
+          post_id: post,
+          comment_id: comment
+        }
+      })
+      // if (res.status === 201) {
+      //   console.log('success new notification')
+      // }
+    } catch(error) {
+      console.log(error)
+    }
+  }
+
   async handleSubmit(event) {
     const {post} = this.props
     const content = event.target.comment.value.trim()
@@ -42,6 +66,7 @@ class NewComment extends Component {
       })
       if (res.status === 201) {
         this.props.fetchComments()
+        this.makeNotification(res.data)
         this.setState({
           alert: true,
           alertType: 'success',

@@ -61,7 +61,7 @@ def posts():
 
 @main.route("/api/notifications")
 def notifications():
-    notifications = notification.query.order_by(notification.date_posted.desc())
+    notifications = Notification.query.order_by(Notification.date_posted.desc())
 
     notifications_serialized = notifications_schema.dump(notifications)
     response = Response(
@@ -96,7 +96,7 @@ def update_notification():
     try:
         data = json.loads(request.data)
         notification = data['notification_id']
-        notification_to_update = db.session.query(Comment).filter_by(id=notification).first()
+        notification_to_update = db.session.query(Notification).filter_by(id=notification).first()
         notification_to_update.has_been_read = data['has_been_read']
 
         db.session.commit()
