@@ -144,6 +144,9 @@ class Account extends Component {
                 size="lg" 
                 type="username" 
                 placeholder="New Username" />
+              <Form.Text id="passwordHelpBlock" muted>
+                Your username must be shorter than 20 characters.
+              </Form.Text>
             </Form.Group>
             <Form.Group>
               <Form.File id="imageUpload" label="Update Profile Picture" accept=".png, .jpg, .jpeg" aria-describedby="imageHelpBlock" name="image_file" />
