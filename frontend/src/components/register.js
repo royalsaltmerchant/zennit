@@ -43,6 +43,9 @@ export default function Register(props) {
               size="lg" 
               type="username" 
               placeholder="Username" />
+            <Form.Text id="passwordHelpBlock" muted>
+                Your username must be shorter than 20 characters.
+            </Form.Text>
           </Form.Group>
 
           <Form.Group controlId="email">
