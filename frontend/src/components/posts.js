@@ -207,9 +207,8 @@ class Posts extends Component {
   renderMorePosts(event) {
     const target = event.target
     const {postsViewable} = this.state
-    const {posts} = this.props
 
-    if(target.scrollHeight - target.scrollTop === target.clientHeight && postsViewable !== posts.length) {
+    if(target.scrollHeight - target.scrollTop === target.clientHeight) {
       this.setState({
         postsViewable: postsViewable + 2
       }, () => {console.log(postsViewable)})
@@ -220,7 +219,7 @@ class Posts extends Component {
     const {user} = this.props
     if(Object.keys(user).length !== 0) {
       return(
-        <Notifications user={this.props.user} />
+        <Notifications user={user} />
       )
     }
   }
@@ -228,10 +227,12 @@ class Posts extends Component {
   render() {
     
     return (
-      <div className="scrolling" onScroll={(event) => this.renderMorePosts(event)}>
-        {this.renderLoader()}
-        {this.renderPostContent()}
+      <div>
         {this.renderNotificationsButton()}
+        <div className="scrolling" onScroll={(event) => this.renderMorePosts(event)}>
+          {this.renderLoader()}
+          {this.renderPostContent()}
+        </div>
       </div>
     )
   }
