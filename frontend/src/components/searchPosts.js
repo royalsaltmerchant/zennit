@@ -107,9 +107,8 @@ class SearchPosts extends Component {
   renderMorePosts(event) {
     const target = event.target
     const {postsViewable} = this.state
-    const {posts} = this.props
 
-    if(target.scrollHeight - target.scrollTop === target.clientHeight && postsViewable !== posts.length) {
+    if(target.scrollHeight - target.scrollTop === target.clientHeight) {
       this.setState({
         postsViewable: postsViewable + 2
       }, () => {console.log(postsViewable)})

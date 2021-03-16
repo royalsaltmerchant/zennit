@@ -12,12 +12,12 @@ import { fetchComments } from '../actions/commentActions'
 
 import NewComment from './newComment.js'
 import LikeButton from './likeButton.js'
+import Notifications from './notifications.js'
 
 import Media from 'react-bootstrap/Media'
 import Button from 'react-bootstrap/Button'
 import Spinner from 'react-bootstrap/Spinner'
 import '../main.css'
-import { faTableTennis } from '@fortawesome/free-solid-svg-icons'
 
 class Posts extends Component {
   constructor(props) {
@@ -207,21 +207,32 @@ class Posts extends Component {
   renderMorePosts(event) {
     const target = event.target
     const {postsViewable} = this.state
-    const {posts} = this.props
 
-    if(target.scrollHeight - target.scrollTop === target.clientHeight && postsViewable !== posts.length) {
+    if(target.scrollHeight - target.scrollTop === target.clientHeight) {
       this.setState({
         postsViewable: postsViewable + 2
       }, () => {console.log(postsViewable)})
     }
   }
 
+  renderNotificationsButton() {
+    const {user} = this.props
+    if(Object.keys(user).length !== 0) {
+      return(
+        <Notifications user={user} />
+      )
+    }
+  }
+
   render() {
     
     return (
-      <div className="scrolling" onScroll={(event) => this.renderMorePosts(event)}>
-        {this.renderLoader()}
-        {this.renderPostContent()}
+      <div>
+        {/* {this.renderNotificationsButton()} */}
+        <div className="scrolling" onScroll={(event) => this.renderMorePosts(event)}>
+          {this.renderLoader()}
+          {this.renderPostContent()}
+        </div>
       </div>
     )
   }
