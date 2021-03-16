@@ -4,6 +4,7 @@ import axios from 'axios'
 
 import '../main.css'
 import Button from 'react-bootstrap/Button'
+import Spinner from 'react-bootstrap/Spinner'
 
 export default function Notifications(props) {
   const [button, setButton] = useState(false)
@@ -12,7 +13,6 @@ export default function Notifications(props) {
   async function handleNotificationRead(event, notification) {
     const {fetchNotifications} = props
 
-    event.preventDefault()
     try {
       const res = await axios({
         method: 'post',
@@ -58,6 +58,7 @@ export default function Notifications(props) {
       return(
         <div className="notifications-box scrolling" onScroll={(event) => renderMoreNotifications(event)}>
           {renderNotifications(user, notifications)}
+          {renderLoader(notifications)}
         </div>
       )
     }
@@ -69,6 +70,15 @@ export default function Notifications(props) {
     if(target.scrollHeight - target.scrollTop === target.clientHeight) {
       setNotificationsViewable(notificationsViewable + 5)
       console.log(notificationsViewable)
+    }
+  }
+
+  function renderLoader(notifications) {
+
+    if(Object.keys(notifications).length === 0) {
+      return(
+        <Spinner animation="border" style={{margin: '30px'}} />
+      )
     }
   }
 
