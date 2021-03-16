@@ -9,6 +9,7 @@ import Spinner from 'react-bootstrap/Spinner'
 export default function Notifications(props) {
   const [button, setButton] = useState(false)
   const [notificationsViewable, setNotificationsViewable] = useState(5)
+  const [changeNotifications, setChangeNotifications] = useState(false)
 
   async function handleNotificationRead(event, notification) {
     const {fetchNotifications} = props
@@ -24,6 +25,10 @@ export default function Notifications(props) {
       })
       if (res.status === 200) {
         fetchNotifications()
+        setChangeNotifications(true)
+        setTimeout(() => {
+          setChangeNotifications(false)
+        }, 500)
       }
     } catch(error) {
       console.log(error)
@@ -59,8 +64,8 @@ export default function Notifications(props) {
     if(button && user) {
       return(
         <div className="notifications-box scrolling" onScroll={(event) => renderMoreNotifications(event)}>
-          {renderNotifications(user, notifications)}
           {renderLoader(notifications)}
+          {renderNotifications(user, notifications)}
         </div>
       )
     }
@@ -77,7 +82,7 @@ export default function Notifications(props) {
 
   function renderLoader(notifications) {
 
-    if(Object.keys(notifications).length === 0) {
+    if(Object.keys(notifications).length === 0 || changeNotifications === true) {
       return(
         <Spinner animation="border" style={{margin: '30px'}} />
       )
