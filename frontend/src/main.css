@@ -25,7 +25,7 @@
     background: #ffffff;
     padding: 10px 20px 20px 20px;
     border: 1px solid #dddddd;
-    border-radius: 3px;
+    border-radius: 6px;
     margin-top: 20px;
     margin-bottom: 20px;
     overflow-wrap: anywhere;
@@ -35,7 +35,7 @@
     background: #ffffff;
     padding: 10px 20px 10px 20px;
     border: 1px solid #dddddd;
-    border-radius: 3px;
+    border-radius: 6px;
     margin-top: 20px;
     margin-bottom: 20px;
   }
@@ -138,10 +138,10 @@
     z-index: 1;
     bottom: 70px;
     right: 5px;
-    background: #f0eef8;
+    background: #f7f5ff;
     padding: 10px 20px 10px 20px;
     border: 1px solid #dddddd;
-    border-radius: 3px;
+    border-radius: 6px;
     margin-top: 20px;
     margin-bottom: 20px;
     max-height: 400px;

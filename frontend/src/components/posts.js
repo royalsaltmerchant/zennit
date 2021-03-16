@@ -228,7 +228,7 @@ class Posts extends Component {
     
     return (
       <div>
-        {this.renderNotificationsButton()}
+        {/* {this.renderNotificationsButton()} */}
         <div className="scrolling" onScroll={(event) => this.renderMorePosts(event)}>
           {this.renderLoader()}
           {this.renderPostContent()}
