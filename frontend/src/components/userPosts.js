@@ -30,13 +30,6 @@ class UserPosts extends Component {
     }
   }
 
-  componentDidMount() {
-    const {fetchPosts, fetchComments} = this.props
-
-    fetchPosts()
-    fetchComments()
-  }
-
   componentDidUpdate(prevProps) {
     const {user, fetchUser, fetchComments, authorization, comments} = this.props
 

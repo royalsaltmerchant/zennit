@@ -48,6 +48,7 @@ export default function NewPost() {
       if (res.status === 201) {
         localStorage.setItem("newPost", true)
         history.replace("/")
+        history.go("/")
       } else {
         setAlert(true)
       }

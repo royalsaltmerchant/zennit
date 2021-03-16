@@ -30,16 +30,8 @@ class Posts extends Component {
     }
   }
 
-  componentDidMount() {
-    const {fetchPosts, fetchComments, fetchNotifications} = this.props
-
-    fetchPosts()
-    fetchComments()
-    fetchNotifications()
-  }
-
   componentDidUpdate(prevProps) {
-    const {user, fetchUser, fetchComments, authorization, comments} = this.props
+    const {user, fetchUser, authorization} = this.props
 
     if(prevProps.authorization !== authorization) {
       fetchUser()

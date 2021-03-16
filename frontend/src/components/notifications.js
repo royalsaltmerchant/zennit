@@ -24,7 +24,6 @@ export default function Notifications(props) {
       })
       if (res.status === 200) {
         fetchNotifications()
-        console.log('success update notification')
       }
     } catch(error) {
       console.log(error)
@@ -41,14 +40,17 @@ export default function Notifications(props) {
         return true
       }
     })
-    console.log(notificationsByUser)
     const newNotifications = notificationsByUser.map(notification => (
       <div key={notification.id}>
-        <Link to={`/post/${notification['post_id']}#comment-length`} onClick={(event) => handleNotificationRead(event, notification.id)}> New Comment from, "{notification['user.username']}", on, "{notification['post.title']}"</Link>
+        <Link to={`/post/${notification['post_id']}#comment-length`} onClick={(event) => handleNotificationRead(event, notification.id)}> New comment from "{notification['user.username']}" on your post "{notification['post.title']}"</Link>
         <hr />
       </div>
     ))
-    return newNotifications.slice(0, notificationsViewable)
+    if(newNotifications.length === 0) {
+      return <p>No New Notifications!</p>
+    } else {
+      return newNotifications.slice(0, notificationsViewable)
+    }
   }
 
   function renderNotificationsContainer() {

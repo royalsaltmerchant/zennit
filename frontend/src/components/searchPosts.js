@@ -21,12 +21,6 @@ class SearchPosts extends Component {
     }
   }
 
-  componentDidMount() {
-    const {fetchPosts} = this.props
-
-    fetchPosts()
-  }
-
   renderLoader() {
     const {posts} = this.props
 

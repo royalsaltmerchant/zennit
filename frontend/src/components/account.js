@@ -24,10 +24,6 @@ class Account extends Component {
       submission: false
     }
   }
-  
-  componentDidMount() {
-    this.props.fetchUser()
-  }
 
   // when component re-renders
   componentDidUpdate() {

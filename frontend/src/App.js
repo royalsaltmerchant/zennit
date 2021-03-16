@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'
-import { Provider } from 'react-redux'
-import store from './components/store.js'
+
+import Proptypes from 'prop-types'
+import { connect } from 'react-redux'
+import { fetchPosts } from './actions/postActions'
+import { fetchUser } from './actions/usersActions'
+import { fetchComments } from './actions/commentActions'
+import { fetchNotifications } from './actions/notificationActions'
+import { fetchLikes, fetchDislikes } from './actions/likesActions'
 
 import {
   BrowserRouter as Router,
@@ -26,6 +32,7 @@ import ResetPassword from './components/resetPassword.js'
 import Rules from './components/rules.js'
 import Resources from './components/resources.js'
 import SearchPosts from './components/searchPosts.js'
+import Notifications from './components/notifications.js'
 
 import './main.css'
 
@@ -33,13 +40,23 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row'
 import Alert from 'react-bootstrap/Alert'
 
-function App() {
+function App(props) {
   const [authorization, setAuthorization] = useState(false)
   const [alert, setAlert] = useState(false)
   const [alertText, setAlertText] = useState('Welcome!')
 
   const loginMessage = localStorage.getItem("loginMessage")
   const token = localStorage.getItem("token")
+
+  useEffect(() => {
+    const {fetchLikes, fetchDislikes, fetchUser, fetchNotifications, fetchComments, fetchPosts} = props
+    fetchNotifications()
+    fetchComments()
+    fetchPosts()
+    fetchLikes()
+    fetchDislikes()
+    fetchUser()
+  }, [])
 
   useEffect(() => {
     userAuthenticated()
@@ -87,8 +104,16 @@ function App() {
     }
   }
 
+  function renderNotificationsButton() {
+    const {user, notifications, fetchNotifications} = props
+    if(Object.keys(user).length !== 0) {
+      return(
+        <Notifications user={user} notifications={notifications} fetchNotifications={fetchNotifications} />
+      )
+    }
+  }
+
   return (
-    <Provider store={store}>
       <Router>
         <div className="main-body">
           <Navigation authorization={authorization}/>
@@ -96,6 +121,7 @@ function App() {
               <Row>
                 <div className="col-md-8">
                   {renderAlert()}
+                  {renderNotificationsButton()}
                   <Switch>
                     <Route exact path="/">
                       <Posts authorization={authorization} />
@@ -152,8 +178,24 @@ function App() {
             </Container>
         </div>
       </Router>
-    </Provider>
   );
 }
 
-export default App;
+App.propTypes = {
+  fetchPosts: Proptypes.func.isRequired,
+  posts: Proptypes.array.isRequired,
+  fetchUser: Proptypes.func.isRequired,
+  fetchComments: Proptypes.func.isRequired,
+  fetchNotifications: Proptypes.func.isRequired,
+  fetchLikes: Proptypes.func.isRequired,
+  fetchDislikes: Proptypes.func.isRequired
+}
+
+const mapStateToProps = state => ({
+  posts: state.posts.items,
+  user: state.users.item,
+  comments: state.comments.items,
+  notifications: state.notifications.items
+})
+
+export default connect(mapStateToProps, { fetchPosts, fetchUser, fetchComments, fetchNotifications, fetchLikes, fetchDislikes })(App)

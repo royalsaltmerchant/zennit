@@ -27,11 +27,6 @@ class UpdatePost extends Component {
     }
   }
 
-  componentDidMount() {
-    this.props.fetchPosts()
-    this.props.fetchUser()
-  }
-
   componentDidUpdate() {
     const {alert} = this.state
 
@@ -79,6 +74,7 @@ class UpdatePost extends Component {
       if (res.status === 200) {
         localStorage.setItem("updatePost", true)
         this.props.history.replace("/")
+        this.props.history.go("/")
       } else {
         this.setState({
           alert: true

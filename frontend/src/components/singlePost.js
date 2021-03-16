@@ -34,13 +34,6 @@ class SinglePost extends Component {
     }
   }
 
-  componentDidMount() {
-    const {fetchPosts, fetchComments} = this.props
-
-    fetchPosts()
-    fetchComments()
-  }
-
   componentDidUpdate(prevProps) {
     const {user, fetchUser, fetchComments, authorization, comments} = this.props
 
@@ -100,6 +93,7 @@ class SinglePost extends Component {
       if (res.status === 200) {
         localStorage.setItem("deletePost", true)
         this.props.history.replace("/")
+        this.props.history.go("/")
       } else {
         this.setState({
           alert: true

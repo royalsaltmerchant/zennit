@@ -22,14 +22,6 @@ function LikeButton(props) {
     }
   })
 
-  useEffect(() => {
-    const {likes, dislikes, fetchLikes, fetchDislikes} = props
-    fetchLikes()
-    fetchDislikes()
-    fetchUser()
-  }, [])
-
-
   function renderLikesAmount() {
     const {likes, dislikes, post} = props
     const likesById = likes.filter((like) => {
