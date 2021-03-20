@@ -1,11 +1,15 @@
-  /* .main-body {
-    background: #fafafa;
-    color: #333333;
-    margin-top: 3.8rem;
-  } */
+  .main-body {
+    background: rgb(116,101,133);
+    background: linear-gradient(180deg, rgba(116,101,133,1) 10%, rgba(255,255,255,1) 70%);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
   
   h1, h2, h3, h4, h5, h6 {
     color: #444444;
+  }
+
+  a {
+    color: rgb(25, 70, 160);
   }
 
   p {
