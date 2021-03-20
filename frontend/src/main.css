@@ -1,11 +1,12 @@
   .main-body {
     background: rgb(116,101,133);
-    background: linear-gradient(180deg, rgba(116,101,133,1) 10%, rgba(255,255,255,1) 70%);
+    background: linear-gradient(180deg, rgba(116,101,133,1) 10vh, rgba(255,255,255,1) 70vh);
     font-family: 'Noto Sans JP', sans-serif;
+    height: 100vh;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    color: #444444;
+    color: #313131;
   }
 
   a {
