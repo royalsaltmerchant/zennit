@@ -1,15 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { HashLink as Link } from 'react-router-hash-link'
 import axios from 'axios'
 
 import '../main.css'
 import Button from 'react-bootstrap/Button'
 import Spinner from 'react-bootstrap/Spinner'
+import Popover from 'react-bootstrap/Popover'
 
 export default function Notifications(props) {
   const [button, setButton] = useState(false)
   const [notificationsViewable, setNotificationsViewable] = useState(5)
-  const [changeNotifications, setChangeNotifications] = useState(false)
+  const notificationsByUser = props.notifications.filter((notification) => {
+    if(notification['post.user_id'] === props.user.id && notification.has_been_read === false) {
+      return true
+    }
+  })
 
   async function handleNotificationRead(event, notification) {
     const {fetchNotifications} = props
@@ -25,10 +30,6 @@ export default function Notifications(props) {
       })
       if (res.status === 200) {
         fetchNotifications()
-        setChangeNotifications(true)
-        setTimeout(() => {
-          setChangeNotifications(false)
-        }, 500)
       }
     } catch(error) {
       console.log(error)
@@ -39,33 +40,29 @@ export default function Notifications(props) {
     setButton(!button)
   }
 
-  function renderNotifications(user, notifications) {
-    const notificationsByUser = notifications.filter((notification) => {
-      if(notification['post.user_id'] === user.id && notification.has_been_read === false) {
-        return true
-      }
-    })
+  function renderNotifications() {
     const newNotifications = notificationsByUser.map(notification => (
-      <div key={notification.id}>
-        <Link to={`/post/${notification['post_id']}#comment-length`} onClick={(event) => handleNotificationRead(event, notification.id)}> New comment from "{notification['user.username']}" on your post "{notification['post.title']}"</Link>
-        <hr />
-      </div>
+      <Link style={{textDecoration: 'none', color: 'purple'}} to={`/post/${notification['post_id']}#comment-length`} onClick={(event) => handleNotificationRead(event, notification.id)}>
+        <div className="notification px-1 mt-2 mb-2" key={notification.id}>
+          New comment from "{notification['user.username']}" on your post "{notification['post.title']}"
+        </div>
+      </Link>
     ))
     if(newNotifications.length === 0) {
-      return <p>No New Notifications!</p>
+      return <p className="mt-2">No New Notifications!</p>
     } else {
       return newNotifications.slice(0, notificationsViewable)
     }
   }
 
   function renderNotificationsContainer() {
-    const {user, notifications} = props
+    const {user} = props
 
     if(button && user) {
       return(
-        <div className="notifications-box scrolling" onScroll={(event) => renderMoreNotifications(event)}>
-          {renderLoader(notifications)}
-          {renderNotifications(user, notifications)}
+        <div className="notifications-box scrolling p-0" onScroll={(event) => renderMoreNotifications(event)}>
+          {/* {renderLoader()} */}
+          {renderNotifications()}
         </div>
       )
     }
@@ -80,21 +77,35 @@ export default function Notifications(props) {
     }
   }
 
-  function renderLoader(notifications) {
-
-    if(Object.keys(notifications).length === 0 || changeNotifications === true) {
-      return(
-        <Spinner animation="border" style={{margin: '30px'}} />
-      )
-    }
+  function renderNotificationsCount() {
+      if(notificationsByUser.length > 0) {
+        return(
+          <Popover className="popover-style position-relative" placement="top">
+            <Popover.Content>
+              {notificationsByUser.length}
+            </Popover.Content>
+          </Popover>
+        )
+      }
   }
+
+  // function renderLoader() {
+  //   const {fetchNotifications} = props
+  //   console.log(notificationsByUser.length)
+  //   if(notificationsByUser.length !== ) {
+  //     return(
+  //       <Spinner animation="border" style={{margin: '30px'}} />
+  //     )
+  //   }
+  // }
 
   return (
     <div>
       {renderNotificationsContainer()}
       <div className="position-fixed notifications-btn">
+        {renderNotificationsCount()}
         <Button variant="info" onClick={() => handleNotificationsButton()}>
-        Notifications
+          Notifications
         </Button>
       </div>
     </div>
