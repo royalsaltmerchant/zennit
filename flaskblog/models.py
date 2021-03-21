@@ -48,6 +48,17 @@ class Comment(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)
     post = db.relationship(Post, backref='comment', lazy=True)
 
+class Reply(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship(User, backref='reply', lazy=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)
+    post = db.relationship(Post, backref='reply', lazy=True)
+    comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=True)
+    comments = db.relationship(Comment, backref='reply', lazy=True)
+
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -59,6 +70,8 @@ class Notification(db.Model):
     user = db.relationship(User, backref='notification', lazy=True)
     comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=True)
     comments = db.relationship(Comment, backref='notification', lazy=True)
+    reply_id = db.Column(db.Integer, db.ForeignKey('reply.id'), nullable=True)
+    replies = db.relationship(Reply, backref='notification', lazy=True)
 
 class Like(db.Model):
     id = db.Column(db.Integer, primary_key=True)
