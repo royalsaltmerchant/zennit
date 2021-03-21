@@ -41,13 +41,29 @@ export default function Notifications(props) {
   }
 
   function renderNotifications() {
-    const newNotifications = notificationsByUser.map(notification => (
-      <Link style={{textDecoration: 'none', color: 'purple'}} to={`/post/${notification['post_id']}#comment-length`} onClick={(event) => handleNotificationRead(event, notification.id)}>
-        <div className="notification px-1 mt-2 mb-2" key={notification.id}>
-          New comment from "{notification['user.username']}" on your post "{notification['post.title']}"
-        </div>
-      </Link>
-    ))
+    const newNotifications = notificationsByUser.map(notification => {
+      if(notification.notification_type === 'comment') {
+        return(
+          (
+            <Link style={{textDecoration: 'none', color: 'purple'}} to={`/post/${notification['post_id']}#comment-length`} onClick={(event) => handleNotificationRead(event, notification.id)}>
+              <div className="notification px-1 mt-2 mb-2" key={notification.id}>
+                New comment from "{notification['user.username']}" on your post "{notification['post.title']}"
+              </div>
+            </Link>
+          )
+        )
+      } else if(notification.notification_type === 'reply') {
+        return(
+          (
+            <Link style={{textDecoration: 'none', color: 'purple'}} to={`/post/${notification['post_id']}/comment/${notification['comment_id']}`} onClick={(event) => handleNotificationRead(event, notification.id)}>
+              <div className="notification px-1 mt-2 mb-2" key={notification.id}>
+                New reply from "{notification['user.username']}" on your comment in "{notification['post.title']}"
+              </div>
+            </Link>
+          )
+        )
+      }
+    })
     if(newNotifications.length === 0) {
       return <p className="mt-2">No New Notifications!</p>
     } else {
