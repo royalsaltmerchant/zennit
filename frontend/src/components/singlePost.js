@@ -192,8 +192,15 @@ class SinglePost extends Component {
   }
 
   renderReplyButton(comment_id, post) {
+    const {replies} = this.props
+    const repliesById = replies.filter((reply) => {
+      if(reply.comment_id == comment_id) {
+        return true
+      }
+    })
+
     return(
-      <Link className="ml-auto px-2" to={`/post/${post}/comment/${comment_id}`}>Replies</Link>
+      <Link className="ml-auto px-2" to={`/post/${post}/comment/${comment_id}`}>Replies({repliesById.length})</Link>
     )
   }
 

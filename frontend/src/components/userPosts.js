@@ -134,7 +134,7 @@ class UserPosts extends Component {
       }
     })
     return(
-      <div className="mb-3">
+      <div>
         <Link to={`/post/${post}#comment-length`}>Comments({commentsById.length})</Link>
       </div>
     )
@@ -157,8 +157,15 @@ class UserPosts extends Component {
   }
 
   renderReplyButton(comment_id, post) {
+    const {replies} = this.props
+    const repliesById = replies.filter((reply) => {
+      if(reply.comment_id == comment_id) {
+        return true
+      }
+    })
+
     return(
-      <Link className="ml-auto px-2" to={`/post/${post}/comment/${comment_id}`}>Replies</Link>
+      <Link className="ml-auto px-2" to={`/post/${post}/comment/${comment_id}`}>Replies({repliesById.length})</Link>
     )
   }
 

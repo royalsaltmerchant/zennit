@@ -125,7 +125,7 @@ class NewComment extends Component {
     const {user} = this.props
 
     return (
-      <div>
+      <div className="py-3">
         {this.renderAlert()}
         <Media>
           <img
