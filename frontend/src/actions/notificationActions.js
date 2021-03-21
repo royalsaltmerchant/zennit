@@ -7,6 +7,7 @@ export const fetchNotifications = () => dispatch => {
     url: '/api/notifications',
   })
   .then(res => {
+    console.log(res)
     dispatch({
       type: FETCH_NOTIFICATIONS,
       payload: res.data

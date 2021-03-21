@@ -1,5 +1,5 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint, Response, jsonify, current_app
-from flaskblog.models import Post, Notification
+from flaskblog.models import Post, Notification, Comment
 from flaskblog import db, bcrypt, ma
 import logging, json
 import jwt
@@ -25,6 +25,23 @@ class PostSchema(ma.Schema):
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)
 
+class CommentSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = (
+            "id", 
+            "title", 
+            "date_posted", 
+            "content",
+            "post_id",
+            "user_id",
+            "user.username",
+            "user.image_file"
+            )
+
+comment_schema = CommentSchema()
+comments_schema = CommentSchema(many=True)
+
 class NotificationSchema(ma.Schema):
     class Meta:
         # Fields to expose
@@ -40,6 +57,7 @@ class NotificationSchema(ma.Schema):
             "post.title",
             "post.user_id",
             "comment_id",
+            "comment.user_id",
             "comment.content",
             "reply_id",
             "reply.content"

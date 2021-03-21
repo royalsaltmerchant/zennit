@@ -11,7 +11,11 @@ export default function Notifications(props) {
   const [button, setButton] = useState(false)
   const [notificationsViewable, setNotificationsViewable] = useState(5)
   const notificationsByUser = props.notifications.filter((notification) => {
+    console.log(notification['comment.user_id'])
     if(notification['post.user_id'] === props.user.id && notification.has_been_read === false && notification.user_id !== props.user.id) {
+      return true
+    }
+    if(notification['comment.user_id'] === props.user.id && notification.has_been_read === false && notification.user_id !== props.user.id) {
       return true
     }
   })
