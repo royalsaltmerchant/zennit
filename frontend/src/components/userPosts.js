@@ -266,8 +266,8 @@ class UserPosts extends Component {
           </Media.Body>
         </Media>
         {this.renderCommentsLength(post.id)}
-        {this.renderComments(post.id)}
         {this.renderNewComment(post.id)}
+        {this.renderComments(post.id)}
         <hr />
       </div>
       ))
