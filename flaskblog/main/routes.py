@@ -40,7 +40,9 @@ class NotificationSchema(ma.Schema):
             "post.title",
             "post.user_id",
             "comment_id",
-            "comment.content"
+            "comment.content",
+            "reply_id",
+            "reply.content"
             )
 
 notification_schema = NotificationSchema()
@@ -76,7 +78,7 @@ def notifications():
 def new_notification():
     try:
         data = json.loads(request.data)
-        notification = Notification(notification_type=data['notification_type'], user_id=data['user_id'], post_id=data['post_id'], comment_id=data['comment_id'])
+        notification = Notification(notification_type=data['notification_type'], user_id=data['user_id'], post_id=data['post_id'], comment_id=data['comment_id'], reply_id=data['reply_id'])
         db.session.add(notification)
         db.session.commit()
 

@@ -29,7 +29,7 @@ replies_schema = ReplySchema(many=True)
 
 @replies.route("/api/replies", methods=['GET'])
 def api_replies():
-    all_replies = Comment.query.order_by(Comment.date_posted.desc())
+    all_replies = Reply.query.order_by(Reply.date_posted.asc())
 
     replies_serialized = replies_schema.dump(all_replies)
     response = Response(

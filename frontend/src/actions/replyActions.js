@@ -7,7 +7,6 @@ export const fetchReplies = () => dispatch => {
     url: '/api/replies',
   })
   .then(res => {
-    console.log(res)
     dispatch({
       type: FETCH_REPLIES,
       payload: res.data

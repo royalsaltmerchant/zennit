@@ -9,11 +9,11 @@ import { connect } from 'react-redux'
 import { fetchPosts } from '../actions/postActions'
 import { fetchUser } from '../actions/usersActions'
 import { fetchComments } from '../actions/commentActions'
+import { fetchReplies } from '../actions/replyActions'
 import { fetchNotifications } from '../actions/notificationActions'
 
 import NewComment from './newComment.js'
 import LikeButton from './likeButton.js'
-import Notifications from './notifications.js'
 
 import Media from 'react-bootstrap/Media'
 import Button from 'react-bootstrap/Button'
@@ -24,8 +24,9 @@ class Posts extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      postsViewable: 4,
-      commentsViewable: 4,
+      postsViewable: 6,
+      commentsViewable: 2,
+      repliesViewable: 2,
       userIs: false
     }
   }
@@ -94,6 +95,26 @@ class Posts extends Component {
     }
   }
 
+  async handleDeleteReply(id) {
+    try {
+      const res = await axios({
+        headers: {
+          "x-access-token": localStorage.getItem("token")
+        },
+        method: 'post',
+        url: '/api/delete_reply',
+        data: {
+          reply_id: id
+        }
+      })
+      if (res.status === 200) {
+        this.props.fetchReplies()
+      }
+    } catch (error) {
+      console.log(error.response)
+    }
+  }
+
   renderNewComment(post) {
     const {user} = this.props
 
@@ -126,6 +147,20 @@ class Posts extends Component {
     }
   }
 
+  renderReplyEditButtons(replyUser, id) {
+    const {user} = this.props
+
+    if(user.username === replyUser || user.admin === true) {
+      return <Button className="ml-auto delete-comment" onClick={() => this.handleDeleteReply(id)} variant="outline-danger" size="sm"><span>&times;</span></Button>
+    }
+  }
+
+  renderReplyButton(comment_id, post) {
+    return(
+      <Link className="ml-auto px-2" to={`/post/${post}/comment/${comment_id}`}>Replies</Link>
+    )
+  }
+
   renderComments(post) {
     const {comments} = this.props
     const {commentsViewable} = this.state
@@ -146,15 +181,48 @@ class Posts extends Component {
           <div className="comment-head">
             <Link className="mr-2" to={`/user_posts/${comment['user.username']}`}>{comment['user.username']}</Link>
             {this.renderDatePosted(comment.date_posted)}
+            {this.renderReplyButton(comment.id, post)}
             {this.renderCommentEditButtons(comment['user.username'], comment.id)}
           </div>
           <hr />
           <p className="article-content">{comment.content}</p>
         </div>
+        {this.renderReplies(comment.id)}
       </div>
     ))
     
     return commentsByPost.slice(0, commentsViewable)
+  }
+
+  renderReplies(comment) {
+    const {replies} = this.props
+    const {repliesViewable} = this.state
+    const repliesById = replies.filter((reply) => {
+      if(reply.comment_id == comment) {
+        return true
+      }
+    })
+
+    const repliesByComment = repliesById.map(reply => (
+      <div key={reply.id}>
+        {/* <img
+            className="rounded-circle article-img"
+            src={`https://zennitapp.s3.amazonaws.com/${comment['user.image_file']}`}
+            alt="current user" 
+          /> */}
+        <div className="comment-content ml-5">
+          <div className="comment-head">
+            <Link className="mr-2" to={`/user_posts/${reply['user.username']}`}>{reply['user.username']}</Link>
+            {this.renderDatePosted(reply.date_posted)}
+            {this.renderReplyEditButtons(reply['user.username'], reply.id)}
+          </div>
+          <hr />
+          <p className="article-content">{reply.content}</p>
+        </div>
+      </div>
+    ))
+    
+    return repliesByComment.slice(0, repliesViewable)
   }
 
   renderProfileImage(userImage) {
@@ -209,15 +277,6 @@ class Posts extends Component {
     }
   }
 
-  renderNotificationsButton() {
-    const {user, notifications, fetchNotifications} = this.props
-    if(Object.keys(user).length !== 0) {
-      return(
-        <Notifications user={user} notifications={notifications} fetchNotifications={fetchNotifications} />
-      )
-    }
-  }
-
   render() {
     
     return (
@@ -234,8 +293,11 @@ class Posts extends Component {
 Posts.propTypes = {
   fetchPosts: Proptypes.func.isRequired,
   posts: Proptypes.array.isRequired,
+  replies: Proptypes.array.isRequired,
+  comments: Proptypes.array.isRequired,
   fetchUser: Proptypes.func.isRequired,
   fetchComments: Proptypes.func.isRequired,
+  fetchReplies: Proptypes.func.isRequired,
   fetchNotifications: Proptypes.func.isRequired
 }
 
@@ -243,7 +305,8 @@ const mapStateToProps = state => ({
   posts: state.posts.items,
   user: state.users.item,
   comments: state.comments.items,
+  replies: state.replies.items,
   notifications: state.notifications.items
 })
 
-export default connect(mapStateToProps, { fetchPosts, fetchUser, fetchComments, fetchNotifications })(Posts)
+export default connect(mapStateToProps, { fetchPosts, fetchUser, fetchComments, fetchReplies, fetchNotifications })(Posts)
