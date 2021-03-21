@@ -6,6 +6,7 @@ from flask import current_app
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
+    admin = db.Column(db.Boolean, nullable=True, default=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(120), nullable=False, default='daruma.jpg')
     password = db.Column(db.String(60), nullable=False)

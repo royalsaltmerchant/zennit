@@ -40,7 +40,7 @@ posts_schema = PostSchema(many=True)
 class UserSchema(ma.SQLAlchemySchema):
     class Meta:
         model = User
-        fields = ("id", "username", "email", "password", "image_file", "posts")
+        fields = ("id", "username", "admin", "email", "password", "image_file", "posts")
     posts = ma.Nested(PostSchema, many=True)
 
 user_schema = UserSchema()
