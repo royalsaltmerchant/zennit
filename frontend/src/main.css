@@ -145,6 +145,9 @@
     margin: 5px;
     margin-top: 10px;
   }
+  .like-buttons:hover {
+    cursor: pointer;
+  }
 
   .ck-content {
     width: 100%;
