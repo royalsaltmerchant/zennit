@@ -155,9 +155,9 @@ class SinglePost extends Component {
   }
 
   renderCommentEditButtons(commentUser, id) {
-    const {username} = this.props.user
+    const {user} = this.props
 
-    if(username === commentUser && localStorage.getItem("token")) {
+    if(user.username === commentUser || user.admin == true) {
       return <Button className="ml-auto delete-comment" onClick={() => this.handleDeleteComment(id)} variant="outline-danger" size="sm"><span>&times;</span></Button>
     }
   }
@@ -199,10 +199,10 @@ class SinglePost extends Component {
   }
 
   renderEditButtons(postUsername) {
-    const {username} = this.props.user
+    const {user} = this.props
     const {id} = this.props.match.params
 
-    if(username === postUsername && localStorage.getItem("token")) {
+    if(user.username === postUsername || user.admin === true) {
       return(
         <div>
           <Button as={Link} className="mt-1 mb-1" size="sm" to={`/update/post/${id}`}>Update</Button>

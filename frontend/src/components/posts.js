@@ -119,9 +119,9 @@ class Posts extends Component {
   }
 
   renderCommentEditButtons(commentUser, id) {
-    const {username} = this.props.user
+    const {user} = this.props
 
-    if(username === commentUser && localStorage.getItem("token")) {
+    if(user.username === commentUser || user.admin === true) {
       return <Button className="ml-auto delete-comment" onClick={() => this.handleDeleteComment(id)} variant="outline-danger" size="sm"><span>&times;</span></Button>
     }
   }

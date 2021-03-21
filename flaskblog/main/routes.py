@@ -5,7 +5,7 @@ import logging, json
 import jwt
 import datetime
 import os
-####
+
 main = Blueprint('main', __name__)
 
 class PostSchema(ma.Schema):
