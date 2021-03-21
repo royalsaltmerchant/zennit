@@ -11,15 +11,15 @@ export default function Notifications(props) {
   const [button, setButton] = useState(false)
   const [notificationsViewable, setNotificationsViewable] = useState(5)
   const notificationsByUser = props.notifications.filter((notification) => {
-    console.log(notification['comment.user_id'])
-    if(notification['post.user_id'] === props.user.id && notification.has_been_read === false && notification.user_id !== props.user.id) {
-      return true
-    }
-    if(notification['comment.user_id'] === props.user.id && notification.has_been_read === false && notification.user_id !== props.user.id) {
-      return true
+    if(notification.posts) {
+      if(notification.posts.user_id === props.user.id && notification.has_been_read === false && notification.user_id !== props.user.id) {
+        return true
+      } 
+      // if(notification.comments.user_id === props.user.id && notification.has_been_read === false && notification.user_id !== props.user.id) {
+      //   return true
+      // }
     }
   })
-
   async function handleNotificationRead(event, notification) {
     const {fetchNotifications} = props
 
@@ -49,9 +49,9 @@ export default function Notifications(props) {
       if(notification.notification_type === 'comment') {
         return(
           (
-            <Link style={{textDecoration: 'none', color: 'purple'}} to={`/post/${notification['post_id']}#comment-length`} onClick={(event) => handleNotificationRead(event, notification.id)}>
+            <Link style={{textDecoration: 'none', color: 'purple'}} to={`/post/${notification.post_id}#comment-length`} onClick={(event) => handleNotificationRead(event, notification.id)}>
               <div className="notification px-1 mt-2 mb-2" key={notification.id}>
-                New comment from "{notification['user.username']}" on your post "{notification['post.title']}"
+                New comment from "{notification.users.username}" on your post "{notification.posts.title}"
               </div>
             </Link>
           )
@@ -59,9 +59,9 @@ export default function Notifications(props) {
       } else if(notification.notification_type === 'reply') {
         return(
           (
-            <Link style={{textDecoration: 'none', color: 'purple'}} to={`/post/${notification['post_id']}/comment/${notification['comment_id']}`} onClick={(event) => handleNotificationRead(event, notification.id)}>
+            <Link style={{textDecoration: 'none', color: 'purple'}} to={`/post/${notification.post_id}/comment/${notification['comment_id']}`} onClick={(event) => handleNotificationRead(event, notification.id)}>
               <div className="notification px-1 mt-2 mb-2" key={notification.id}>
-                New reply from "{notification['user.username']}" on your comment in "{notification['post.title']}"
+                New reply from "{notification.users.username}" on your comment in "{notification.posts.title}"
               </div>
             </Link>
           )

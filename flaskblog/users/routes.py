@@ -1,6 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint, Response, jsonify, current_app
 from flaskblog import db, bcrypt, ma
 from flaskblog.models import User, Post
+from flaskblog.serializers import UserSchema
 from flaskblog.users.utils import save_picture, send_reset_email
 from functools import wraps
 import logging, json
@@ -9,39 +10,6 @@ import datetime
 import os
 
 users = Blueprint('users', __name__)
-
-class CommentSchema(ma.Schema):
-    class Meta:
-        # Fields to expose
-        fields = (
-            "id", 
-            "title", 
-            "date_posted", 
-            "content",
-            "post_id",
-            "post.title",
-            "user_id",
-            "user.username",
-            "user.image_file"
-            )
-
-comment_schema = CommentSchema()
-comments_schema = CommentSchema(many=True)
-
-class PostSchema(ma.SQLAlchemySchema):
-    class Meta:
-        model = Post
-        fields = ("id", "title", "date_posted", "content", "user_id", "comments")
-    comments = ma.Nested(CommentSchema, many=True)
-
-post_schema = PostSchema()
-posts_schema = PostSchema(many=True)
-
-class UserSchema(ma.SQLAlchemySchema):
-    class Meta:
-        model = User
-        fields = ("id", "username", "admin", "email", "password", "image_file", "posts")
-    posts = ma.Nested(PostSchema, many=True)
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)

@@ -34,7 +34,7 @@ class Post(db.Model):
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship(User, backref='post', lazy=True)
+    users = db.relationship(User, backref='post', lazy=True)
     comments = db.relationship("Comment", lazy=True)
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
@@ -44,7 +44,7 @@ class Comment(db.Model):
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship(User, backref='comment', lazy=True)
+    users = db.relationship(User, backref='comment', lazy=True)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)
     post = db.relationship(Post, backref='comment', lazy=True)
 
@@ -53,7 +53,7 @@ class Reply(db.Model):
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship(User, backref='reply', lazy=True)
+    users = db.relationship(User, backref='reply', lazy=True)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)
     post = db.relationship(Post, backref='reply', lazy=True)
     comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=True)
@@ -65,9 +65,9 @@ class Notification(db.Model):
     notification_type = db.Column(db.String(30), nullable=False)
     has_been_read = db.Column(db.Boolean, nullable=False, default=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)
-    post = db.relationship(Post, backref='notification', lazy=True)
+    posts = db.relationship(Post, backref='notification', lazy=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship(User, backref='notification', lazy=True)
+    users = db.relationship(User, backref='notification', lazy=True)
     comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=True)
     comments = db.relationship(Comment, backref='notification', lazy=True)
     reply_id = db.Column(db.Integer, db.ForeignKey('reply.id'), nullable=True)
@@ -78,11 +78,11 @@ class Like(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)
     post = db.relationship(Post, backref='like', lazy=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship(User, backref='like', lazy=True)
+    users = db.relationship(User, backref='like', lazy=True)
 
 class Dislike(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)
     post = db.relationship(Post, backref='Dislike', lazy=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship(User, backref='dislike', lazy=True)
+    users = db.relationship(User, backref='dislike', lazy=True)

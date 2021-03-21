@@ -1,6 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint, Response, jsonify, current_app
 from flaskblog.models import Like, Dislike
 from flaskblog.users.routes import token_required
+from flaskblog.serializers import LikeSchema, DislikeSchema
 from flaskblog import db, bcrypt, ma
 import logging, json
 import jwt
@@ -9,29 +10,8 @@ import os
 
 likes = Blueprint('likes', __name__)
 
-class LikeSchema(ma.Schema):
-    class Meta:
-        # Fields to expose
-        fields = (
-            "id", 
-            "post_id",
-            "user_id",
-            "user.username"
-            )
-
 like_schema = LikeSchema()
 likes_schema = LikeSchema(many=True)
-
-class DislikeSchema(ma.Schema):
-    class Meta:
-        # Fields to expose
-        fields = (
-            "id",
-            "post_id",
-            "user_id",
-            "user.username"
-            )
-
 dislike_schema = DislikeSchema()
 dislikes_schema = DislikeSchema(many=True)
 

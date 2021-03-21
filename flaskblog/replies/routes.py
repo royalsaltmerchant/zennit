@@ -1,6 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint, Response, jsonify, current_app
 from flaskblog.models import Reply
 from flaskblog import db, bcrypt, ma
+from flaskblog.serializers import ReplySchema
 from flaskblog.users.routes import token_required
 import logging, json
 import jwt
@@ -8,21 +9,6 @@ import datetime
 import os
 
 replies = Blueprint('replies', __name__)
-
-class ReplySchema(ma.Schema):
-    class Meta:
-        # Fields to expose
-        fields = (
-            "id", 
-            "title", 
-            "date_posted", 
-            "content",
-            "post_id",
-            "user_id",
-            "user.username",
-            "user.image_file",
-            "comment_id"
-            )
 
 reply_schema = ReplySchema()
 replies_schema = ReplySchema(many=True)

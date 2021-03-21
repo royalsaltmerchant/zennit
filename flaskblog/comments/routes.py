@@ -2,26 +2,13 @@ from flask import render_template, url_for, flash, redirect, request, Blueprint,
 from flaskblog.models import Comment
 from flaskblog import db, bcrypt, ma
 from flaskblog.users.routes import token_required
+from flaskblog.serializers import CommentSchema
 import logging, json
 import jwt
 import datetime
 import os
 
 comments = Blueprint('comments', __name__)
-
-class CommentSchema(ma.Schema):
-    class Meta:
-        # Fields to expose
-        fields = (
-            "id", 
-            "title", 
-            "date_posted", 
-            "content",
-            "post_id",
-            "user_id",
-            "user.username",
-            "user.image_file"
-            )
 
 comment_schema = CommentSchema()
 comments_schema = CommentSchema(many=True)

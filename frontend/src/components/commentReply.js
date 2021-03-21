@@ -64,12 +64,12 @@ function CommentReply(props) {
       <div key={comment.id}>
         {/* <img
             className="rounded-circle article-img"
-            src={`https://zennitapp.s3.amazonaws.com/${comment['user.image_file']}`}
+            src={`https://zennitapp.s3.amazonaws.com/${comment.users.image_file}`}
             alt="current user" 
           /> */}
         <div className="comment-content">
           <div className="comment-head">
-            <Link className="mr-2" to={`/user_posts/${comment['user.username']}`}>{comment['user.username']}</Link>
+            <Link className="mr-2" to={`/user_posts/${comment.users.username}`}>{comment.users.username}</Link>
             {renderDatePosted(comment.date_posted)}
           </div>
           <hr />
@@ -93,14 +93,14 @@ function CommentReply(props) {
       <div key={reply.id}>
         {/* <img
             className="rounded-circle article-img"
-            src={`https://zennitapp.s3.amazonaws.com/${comment['user.image_file']}`}
+            src={`https://zennitapp.s3.amazonaws.com/${comment.users.image_file}`}
             alt="current user" 
           /> */}
         <div className="comment-content ml-5">
           <div className="comment-head">
-            <Link className="mr-2" to={`/user_posts/${reply['user.username']}`}>{reply['user.username']}</Link>
+            <Link className="mr-2" to={`/user_posts/${reply.users.username}`}>{reply.users.username}</Link>
             {renderDatePosted(reply.date_posted)}
-            {renderReplyEditButtons(reply['user.username'], reply.id)}
+            {renderReplyEditButtons(reply.users.username, reply.id)}
           </div>
           <hr />
           <p className="article-content">{reply.content}</p>
