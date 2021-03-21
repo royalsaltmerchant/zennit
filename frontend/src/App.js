@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import { fetchPosts } from './actions/postActions'
 import { fetchUser } from './actions/usersActions'
 import { fetchComments } from './actions/commentActions'
+import { fetchReplies } from './actions/replyActions'
 import { fetchNotifications } from './actions/notificationActions'
 import { fetchLikes, fetchDislikes } from './actions/likesActions'
 
@@ -33,6 +34,7 @@ import Rules from './components/rules.js'
 import Resources from './components/resources.js'
 import SearchPosts from './components/searchPosts.js'
 import Notifications from './components/notifications.js'
+import CommentReply from './components/commentReply.js'
 
 import './main.css'
 
@@ -49,9 +51,10 @@ function App(props) {
   const token = localStorage.getItem("token")
 
   useEffect(() => {
-    const {fetchLikes, fetchDislikes, fetchUser, fetchNotifications, fetchComments, fetchPosts} = props
+    const {fetchLikes, fetchDislikes, fetchUser, fetchNotifications, fetchComments, fetchReplies, fetchPosts} = props
     fetchNotifications()
     fetchComments()
+    fetchReplies()
     fetchPosts()
     fetchLikes()
     fetchDislikes()
@@ -135,11 +138,14 @@ function App(props) {
                     <Route path="/user_posts/:username">
                       <UserPosts authorization={authorization} />
                     </Route>
-                    <Route path="/post/:id">
+                    <Route exact path="/post/:id">
                       <SinglePost authorization={authorization} />
                     </Route>
                     <Route path="/update/post/:id">
                       <UpdatePost />
+                    </Route>
+                    <Route exact path="/post/:post_id/comment/:comment_id">
+                      <CommentReply />
                     </Route>
                     <Route path="/about">
                       <About />
@@ -183,9 +189,9 @@ function App(props) {
 
 App.propTypes = {
   fetchPosts: Proptypes.func.isRequired,
-  posts: Proptypes.array.isRequired,
   fetchUser: Proptypes.func.isRequired,
   fetchComments: Proptypes.func.isRequired,
+  fetchReplies: Proptypes.func.isRequired,
   fetchNotifications: Proptypes.func.isRequired,
   fetchLikes: Proptypes.func.isRequired,
   fetchDislikes: Proptypes.func.isRequired
@@ -195,7 +201,8 @@ const mapStateToProps = state => ({
   posts: state.posts.items,
   user: state.users.item,
   comments: state.comments.items,
+  replies: state.replies.items,
   notifications: state.notifications.items
 })
 
-export default connect(mapStateToProps, { fetchPosts, fetchUser, fetchComments, fetchNotifications, fetchLikes, fetchDislikes })(App)
+export default connect(mapStateToProps, { fetchPosts, fetchUser, fetchComments, fetchReplies, fetchNotifications, fetchLikes, fetchDislikes })(App)

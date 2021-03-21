@@ -10,14 +10,23 @@ import Popover from 'react-bootstrap/Popover'
 export default function Notifications(props) {
   const [button, setButton] = useState(false)
   const [notificationsViewable, setNotificationsViewable] = useState(5)
+  const [loading, setLoading] = useState(false)
   const notificationsByUser = props.notifications.filter((notification) => {
-    if(notification['post.user_id'] === props.user.id && notification.has_been_read === false && notification.user_id !== props.user.id) {
-      return true
-    }
+    if(notification.posts && notification.comments) {
+      if(notification.has_been_read !== true ) {
+        if(props.user.id === notification.posts.user_id || props.user.id === notification.comments.user_id) {
+          if(notification.user_id !== props.user.id) {
+            return true
+          }
+        }
+      }
+    } 
   })
 
   async function handleNotificationRead(event, notification) {
     const {fetchNotifications} = props
+
+    setLoading(true)
 
     try {
       const res = await axios({
@@ -30,6 +39,7 @@ export default function Notifications(props) {
       })
       if (res.status === 200) {
         fetchNotifications()
+        setLoading(false)
       }
     } catch(error) {
       console.log(error)
@@ -41,13 +51,29 @@ export default function Notifications(props) {
   }
 
   function renderNotifications() {
-    const newNotifications = notificationsByUser.map(notification => (
-      <Link style={{textDecoration: 'none', color: 'purple'}} to={`/post/${notification['post_id']}#comment-length`} onClick={(event) => handleNotificationRead(event, notification.id)}>
-        <div className="notification px-1 mt-2 mb-2" key={notification.id}>
-          New comment from "{notification['user.username']}" on your post "{notification['post.title']}"
-        </div>
-      </Link>
-    ))
+    const newNotifications = notificationsByUser.map(notification => {
+      if(notification.notification_type === 'comment') {
+        return(
+          (
+            <Link style={{textDecoration: 'none', color: 'purple'}} to={`/post/${notification.post_id}/comment/${notification['comment_id']}`} onClick={(event) => handleNotificationRead(event, notification.id)}>
+              <div className="notification px-1 mt-2 mb-2" key={notification.id}>
+                New comment from "{notification.users.username}" on your post "{notification.posts.title}"
+              </div>
+            </Link>
+          )
+        )
+      } else if(notification.notification_type === 'reply') {
+        return(
+          (
+            <Link style={{textDecoration: 'none', color: 'purple'}} to={`/post/${notification.post_id}/comment/${notification['comment_id']}`} onClick={(event) => handleNotificationRead(event, notification.id)}>
+              <div className="notification px-1 mt-2 mb-2" key={notification.id}>
+                New reply from "{notification.users.username}" on your comment in "{notification.posts.title}"
+              </div>
+            </Link>
+          )
+        )
+      }
+    })
     if(newNotifications.length === 0) {
       return <p className="mt-2">No New Notifications!</p>
     } else {
@@ -61,7 +87,7 @@ export default function Notifications(props) {
     if(button && user) {
       return(
         <div className="notifications-box scrolling p-0" onScroll={(event) => renderMoreNotifications(event)}>
-          {/* {renderLoader()} */}
+          {renderLoader()}
           {renderNotifications()}
         </div>
       )
@@ -89,15 +115,13 @@ export default function Notifications(props) {
       }
   }
 
-  // function renderLoader() {
-  //   const {fetchNotifications} = props
-  //   console.log(notificationsByUser.length)
-  //   if(notificationsByUser.length !== ) {
-  //     return(
-  //       <Spinner animation="border" style={{margin: '30px'}} />
-  //     )
-  //   }
-  // }
+  function renderLoader() {
+    if(loading === true) {
+      return(
+        <Spinner animation="border" style={{margin: '30px'}} />
+      )
+    }
+  }
 
   return (
     <div>

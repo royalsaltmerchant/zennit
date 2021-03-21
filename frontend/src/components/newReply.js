@@ -3,7 +3,7 @@ import axios from 'axios'
 
 import Proptypes from 'prop-types'
 import { connect } from 'react-redux'
-import { fetchComments } from '../actions/commentActions'
+import { fetchReplies } from '../actions/replyActions'
 
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
@@ -12,7 +12,7 @@ import Media from 'react-bootstrap/Media'
 import Row from 'react-bootstrap/Row'
 import '../main.css'
 
-class NewComment extends Component {
+class NewReply extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -23,19 +23,21 @@ class NewComment extends Component {
   }
 
   async makeNotification(data) {
-    const comment = data.id
+    const reply = data.id
     const post = data.post_id
     const user = data.user_id
+    const comment = data.comment_id
 
     try {
       const res = await axios({
         method: 'post',
         url: '/api/new_notification',
         data: {
-          notification_type: 'comment',
+          notification_type: 'reply',
           user_id: user,
           post_id: post,
-          comment_id: comment
+          comment_id: comment,
+          reply_id: reply
         }
       })
       // if (res.status === 201) {
@@ -47,8 +49,8 @@ class NewComment extends Component {
   }
 
   async handleSubmit(event) {
-    const {post} = this.props
-    const content = event.target.comment.value.trim()
+    const {post, comment} = this.props
+    const content = event.target.reply.value.trim()
 
     event.preventDefault()
     try {
@@ -57,19 +59,20 @@ class NewComment extends Component {
           "x-access-token": localStorage.getItem("token")
         },
         method: 'post',
-        url: '/api/new_comment',
+        url: '/api/new_reply',
         data: {
           post_id: post,
+          comment_id: comment,
           content: content
         }
       })
       if (res.status === 201) {
-        this.props.fetchComments()
+        this.props.fetchReplies()
         this.makeNotification(res.data)
         this.setState({
           alert: true,
           alertType: 'success',
-          alertText: 'Comment Successfully Created!'
+          alertText: 'Reply Successfully Created!'
         })
       } else {
         this.setState({
@@ -83,7 +86,7 @@ class NewComment extends Component {
           this.setState({
             alert: true,
             alertType: 'warning',
-            alertText: 'Please login to comment!'
+            alertText: 'Please login to reply!'
           })
         } else if(error.response.status === 500) {
           this.setState({
@@ -110,7 +113,7 @@ class NewComment extends Component {
         this.setState({
           alert: false,
           alertType: 'warning',
-          alertText: 'Please login to comment!'
+          alertText: 'Please login to reply!'
         })
       }, 5000)
       return(
@@ -125,7 +128,7 @@ class NewComment extends Component {
     const {user} = this.props
 
     return (
-      <div className="py-3">
+      <div>
         {this.renderAlert()}
         <Media>
           <img
@@ -134,17 +137,17 @@ class NewComment extends Component {
             alt="current user" 
           />
           <Form onSubmit={(event) => this.handleSubmit(event)}>
-            <Form.Group controlId="comment">
+            <Form.Group controlId="reply">
               <Form.Control
                 required
                 as="textarea"
                 size="md"
                 cols="50"
-                type="comment" 
+                type="reply" 
                 placeholder="Expound the dharma..." />
             </Form.Group>
             <Button variant="outline-info" type="submit">
-              Comment
+              Reply
             </Button>
           </Form>
         </Media>
@@ -153,12 +156,12 @@ class NewComment extends Component {
   }
 }
 
-NewComment.propTypes = {
-  fetchComments: Proptypes.func.isRequired
+NewReply.propTypes = {
+  fetchReplies: Proptypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
-  comments: state.comments.items
+  replies: state.replies.items
 })
 
-export default connect(mapStateToProps, { fetchComments })(NewComment)
+export default connect(mapStateToProps, { fetchReplies })(NewReply)

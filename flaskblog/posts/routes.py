@@ -1,6 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, abort, Blueprint, Response, jsonify, current_app
 from flaskblog import db, ma 
 from flaskblog.models import Post, User
+from flaskblog.serializers import PostSchema
 from flaskblog.users.routes import token_required
 import logging, json
 import jwt
@@ -8,11 +9,6 @@ import datetime
 import os
 
 posts = Blueprint('posts', __name__)
-
-class PostSchema(ma.Schema):
-    class Meta:
-        # Fields to expose
-        fields = ("id", "title", "date_posted", "content", "user_id")
 
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)

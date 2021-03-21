@@ -10,6 +10,7 @@ import { compose } from 'redux'
 import { fetchPosts } from '../actions/postActions'
 import { fetchUser } from '../actions/usersActions'
 import { fetchComments } from '../actions/commentActions'
+import { fetchReplies } from '../actions/replyActions'
 
 import NewComment from './newComment.js'
 import LikeButton from './likeButton.js'
@@ -29,7 +30,7 @@ class SinglePost extends Component {
       alert: false,
       alertText: 'Something went wrong, please try again later!',
       alertType: 'warning',
-      commentsViewable: 4,
+      repliesViewable: 2,
       userIs: false
     }
   }
@@ -134,6 +135,26 @@ class SinglePost extends Component {
     }
   }
 
+  async handleDeleteReply(id) {
+    try {
+      const res = await axios({
+        headers: {
+          "x-access-token": localStorage.getItem("token")
+        },
+        method: 'post',
+        url: '/api/delete_reply',
+        data: {
+          reply_id: id
+        }
+      })
+      if (res.status === 200) {
+        this.props.fetchReplies()
+      }
+    } catch (error) {
+      console.log(error.response)
+    }
+  }
+
   renderNewComment(post) {
     const {user} = this.props
 
@@ -162,6 +183,27 @@ class SinglePost extends Component {
     }
   }
 
+  renderReplyEditButtons(replyUser, id) {
+    const {user} = this.props
+
+    if(user.username === replyUser || user.admin === true) {
+      return <Button className="ml-auto delete-comment" onClick={() => this.handleDeleteReply(id)} variant="outline-danger" size="sm"><span>&times;</span></Button>
+    }
+  }
+
+  renderReplyButton(comment_id, post) {
+    const {replies} = this.props
+    const repliesById = replies.filter((reply) => {
+      if(reply.comment_id == comment_id) {
+        return true
+      }
+    })
+
+    return(
+      <Link className="ml-auto px-2" to={`/post/${post}/comment/${comment_id}`}>Replies({repliesById.length})</Link>
+    )
+  }
+
   renderComments(post) {
     const {comments} = this.props
     const {commentsViewable} = this.state
@@ -175,23 +217,56 @@ class SinglePost extends Component {
       <div key={comment.id}>
         {/* <img
             className="rounded-circle article-img"
-            src={`https://zennitapp.s3.amazonaws.com/${comment['user.image_file']}`}
+            src={`https://zennitapp.s3.amazonaws.com/${comment.users.image_file}`}
             alt="current user" 
           /> */}
         <div className="comment-content">
           <div className="comment-head" id="comment-head">
-            <Link className="mr-2" to={`/user_posts/${comment['user.username']}`}>{comment['user.username']}</Link>
+            <Link className="mr-2" to={`/user_posts/${comment.users.username}`}>{comment.users.username}</Link>
             {this.renderDatePosted(comment.date_posted)}
-            {this.renderCommentEditButtons(comment['user.username'], comment.id)}
+            {this.renderReplyButton(comment.id, post)}
+            {this.renderCommentEditButtons(comment.users.username, comment.id)}
           </div>
           <hr />
           <p className="article-content">{comment.content}</p>
         </div>
+        {this.renderReplies(comment.id)}
       </div>
     ))
     
     // return commentsByPost.slice(0, commentsViewable)
     return commentsByPost
+  }
+
+  renderReplies(comment) {
+    const {replies} = this.props
+    const {repliesViewable} = this.state
+    const repliesById = replies.filter((reply) => {
+      if(reply.comment_id == comment) {
+        return true
+      }
+    })
+
+    const repliesByComment = repliesById.map(reply => (
+      <div key={reply.id}>
+        {/* <img
+            className="rounded-circle article-img"
+            src={`https://zennitapp.s3.amazonaws.com/${comment.users.image_file}`}
+            alt="current user" 
+          /> */}
+        <div className="comment-content ml-5">
+          <div className="comment-head">
+            <Link className="mr-2" to={`/user_posts/${reply.users.username}`}>{reply.users.username}</Link>
+            {this.renderDatePosted(reply.date_posted)}
+            {this.renderReplyEditButtons(reply.users.username, reply.id)}
+          </div>
+          <hr />
+          <p className="article-content">{reply.content}</p>
+        </div>
+      </div>
+    ))
+    
+    return repliesByComment.slice(0, repliesViewable)
   }
 
   renderProfileImage(userImage) {
@@ -233,14 +308,14 @@ class SinglePost extends Component {
       <div key={post.id}>
         <Media className="content-section">
           <div style={{display: 'flex', flexDirection: 'column'}}>
-            {this.renderProfileImage(post['user.image_file'])}
+            {this.renderProfileImage(post.users.image_file)}
             {this.renderLikeButtons(post)}
           </div>
           <Media.Body>
             <div className="article-metadata">
-              <Link className="mr-2" to={`/user_posts/${post['user.username']}`}>{post['user.username']}</Link>
+              <Link className="mr-2" to={`/user_posts/${post.users.username}`}>{post.users.username}</Link>
               {this.renderDatePosted(post.date_posted)}
-              {this.renderEditButtons(post['user.username'])}
+              {this.renderEditButtons(post.users.username)}
             </div>
             <h2><Link className="article-title" to={`/post/${post.id}`}>{post.title}</Link></h2>
             <hr />
@@ -248,8 +323,8 @@ class SinglePost extends Component {
           </Media.Body>
         </Media>
         {this.renderCommentsLength(post.id)}
-        {this.renderComments(post.id)}
         {this.renderNewComment(post.id)}
+        {this.renderComments(post.id)}
         <hr />
       </div>
       ))
@@ -287,14 +362,18 @@ class SinglePost extends Component {
 SinglePost.propTypes = {
   fetchPosts: Proptypes.func.isRequired,
   posts: Proptypes.array.isRequired,
+  replies: Proptypes.array.isRequired,
+  comments: Proptypes.array.isRequired,
   fetchUser: Proptypes.func.isRequired,
-  fetchComments: Proptypes.func.isRequired
+  fetchComments: Proptypes.func.isRequired,
+  fetchReplies: Proptypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
   posts: state.posts.items,
   user: state.users.item,
-  comments: state.comments.items
+  comments: state.comments.items,
+  replies: state.replies.items
 })
 
-export default compose(withRouter, connect(mapStateToProps, { fetchPosts, fetchUser, fetchComments }))(SinglePost)
+export default compose(withRouter, connect(mapStateToProps, { fetchPosts, fetchUser, fetchComments, fetchReplies }))(SinglePost)
