@@ -18,6 +18,9 @@ export default class Resources extends Component {
           <hr />
           <p>The well of ancient texts!</p>
           <a href="https://terebess.hu/zen/index.html">Terebess</a>
+          <hr />
+          <p>Start with the Gateless Gate!</p>
+          <a href="https://www.sacred-texts.com/bud/glg/index.htm">Sacred Texts: The Gateless Gate</a>
         </div>
       </div>
     )
