@@ -86,7 +86,7 @@ export default function Login() {
             <Form.Label>Email</Form.Label>
             <Form.Control 
               required
-              size="lg"
+              size="md"
               type="email"
               placeholder="Account Email" />
           </Form.Group>
@@ -95,7 +95,7 @@ export default function Login() {
             <Form.Label>Password</Form.Label>
             <Form.Control 
               required
-              size="lg" 
+              size="md" 
               type="password" 
               placeholder="Account Password" />
           </Form.Group>

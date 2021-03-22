@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { HashLink as Link } from 'react-router-hash-link'
 import axios from 'axios'
 
 import Proptypes from 'prop-types'
@@ -115,14 +116,14 @@ class Account extends Component {
         <div className="content-section">
           <Media>
             <img
-              width={64}
-              height={64}
+              width={30}
+              height={30}
               className="rounded-circle account-img"
               src={`https://zennitapp.s3.amazonaws.com/${user.image_file}`}
               alt="Current User Profile Avatar"
             />
-            <Media.Body>
-              <h2 className="account-heading">{user.username}</h2>
+            <Media.Body className="d-flex flex-column align-items-end">
+              <Link style={{fontSize: '30px'}} className="article-title" to={`/user_posts/${user.username}`}>{user.username}</Link>
               <p className="text-secondary">{user.email}</p>
             </Media.Body>
           </Media>
@@ -130,8 +131,8 @@ class Account extends Component {
           <Form onSubmit={(event) => this.handleSubmit(event)}>
           <Form.Group controlId="email">
             <Form.Label>Email</Form.Label>
-              <Form.Control 
-                size="lg"
+              <Form.Control
+                size="md"
                 type="email"
                 placeholder="New Email" />
             </Form.Group>
@@ -139,7 +140,7 @@ class Account extends Component {
             <Form.Group controlId="username">
               <Form.Label>Username</Form.Label>
               <Form.Control 
-                size="lg" 
+                size="md" 
                 type="username" 
                 placeholder="New Username" />
               <Form.Text id="passwordHelpBlock" muted>

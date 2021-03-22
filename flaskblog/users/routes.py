@@ -16,23 +16,29 @@ users_schema = UserSchema(many=True)
 
 @users.route('/api/register', methods=['GET', 'POST'])
 def api_register():
-    data = json.loads(request.data)
-    username = data['username']
-    email = data['email'].lower()
-    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    try:
+        data = json.loads(request.data)
+        username = data['username']
+        email = data['email'].lower()
+        hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
 
-    user = User(username=username, email=email, password=hashed_password)
-    db.session.add(user)
-    db.session.commit()
+        user = User(username=username, email=email, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
 
-    user_serialized = user_schema.dump(user)
-    response = Response(
-        response=json.dumps(user_serialized),
-        status=201,
-        mimetype='application/json'
-    )
+        user_serialized = user_schema.dump(user)
+        response = Response(
+            response=json.dumps(user_serialized),
+            status=201,
+            mimetype='application/json'
+        )
 
-    return response
+        return response
+    except:
+        return Response(
+            response='Incorrect account information',
+            status=400
+        )
 
 @users.route('/api/login', methods=['GET', 'POST'])
 def api_login():
