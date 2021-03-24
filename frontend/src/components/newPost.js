@@ -77,7 +77,7 @@ export default function NewPost() {
   return (
     <div>
       {renderAlert()}
-      <div className="content-section">
+      <div className="new-post-section">
         <legend className="border-bottom mb-4">New Post</legend>
           <Form onSubmit={(event) => handleSubmit(event)}>
             <Form.Group controlId="title">
