@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'
+import {Elements} from '@stripe/react-stripe-js';
+import {loadStripe} from '@stripe/stripe-js';
 
 import Proptypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -35,6 +37,7 @@ import Resources from './components/resources.js'
 import SearchPosts from './components/searchPosts.js'
 import Notifications from './components/notifications.js'
 import CommentReply from './components/commentReply.js'
+import Donations from './components/donations.js'
 
 import './main.css'
 
@@ -49,6 +52,9 @@ function App(props) {
 
   const loginMessage = localStorage.getItem("loginMessage")
   const token = localStorage.getItem("token")
+
+  const stripePromise = loadStripe('pk_live_51Ia59aGq9UZ7zid2ybFk81dkDQjwN3zfRN8JAXETNfkH9W1v06voGmL5q5AHZhTKUuYIUiIGmYKTg9YQm0xgjkSd00WQoask1c');
+
 
   useEffect(() => {
     const {fetchLikes, fetchDislikes, fetchUser, fetchNotifications, fetchComments, fetchReplies, fetchPosts} = props
@@ -117,6 +123,7 @@ function App(props) {
   }
 
   return (
+    <Elements stripe={stripePromise}>
       <Router>
         <div className="main-body">
           <Navigation authorization={authorization}/>
@@ -153,6 +160,9 @@ function App(props) {
                     <Route path="/rules">
                       <Rules />
                     </Route>
+                    <Route path="/donations">
+                      <Donations />
+                    </Route>
                     <Route path="/resources">
                       <Resources />
                     </Route>
@@ -184,6 +194,7 @@ function App(props) {
             </Container>
         </div>
       </Router>
+    </Elements>
   );
 }
 

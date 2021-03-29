@@ -27,6 +27,9 @@ export default class Sidebar extends Component {
               <ListGroup.Item>
                 <Link to="/resources">Resources</Link>
               </ListGroup.Item>
+              <ListGroup.Item>
+                <Link to="/donations">Donations</Link>
+              </ListGroup.Item>
               {/* <ListGroup.Item>
                 <Link to="/users_list">Users</Link>
               </ListGroup.Item> */}

@@ -6,8 +6,11 @@ import logging, json
 import jwt
 import datetime
 import os
+import stripe
 
 main = Blueprint('main', __name__)
+
+stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
 
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)
@@ -95,3 +98,21 @@ def update_notification():
         return response
     except:
         raise
+
+@main.route('/api/stripe_intent', methods=['POST'])
+def create_payment():
+    data = json.loads(request.data)
+    # Create a PaymentIntent with the order amount and currency
+    intent = stripe.PaymentIntent.create(
+        amount=data['amount'],
+        currency='usd',
+        receipt_email=data['email'].lower(),
+        description='Donation'
+    )
+
+    try:
+        # Send publishable key and PaymentIntent details to client
+        return jsonify({'publishable_key': os.environ.get('STRIPE_PUBLISHABLE_KEY'), 'client_secret': intent.client_secret})
+    except Exception as e:
+        return jsonify(error=str(e)), 403
+
