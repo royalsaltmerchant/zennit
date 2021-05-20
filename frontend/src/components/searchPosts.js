@@ -58,12 +58,13 @@ class SearchPosts extends Component {
   }
 
   renderPostContent() {
+    console.log('match params',this.props.match.params.input)
     const {postsViewable} = this.state
     const {input} = this.props.match.params
     const {posts} = this.props
     const searchPosts = posts.filter((post) => {
       const search = input.toLowerCase()
-      const user = JSON.stringify(post['user.username'].toLowerCase())
+      const user = JSON.stringify(post.users.username.toLowerCase())
       const content = JSON.stringify(post.content.toLowerCase())
       const title = JSON.stringify(post.title.toLowerCase())
 
@@ -81,11 +82,11 @@ class SearchPosts extends Component {
       <div key={post.id}>
         <Media className="content-section">
           <div style={{display: 'flex', flexDirection: 'column'}}>
-            {this.renderProfileImage(post['user.image_file'])}
+            {this.renderProfileImage(post.users.image_file)}
           </div>
           <Media.Body>
             <div className="article-metadata">
-              <Link className="mr-2" to={`/user_posts/${post['user.username']}`}>{post['user.username']}</Link>
+              <Link className="mr-2" to={`/user_posts/${post.users.username}`}>{post.users.username}</Link>
               {this.renderDatePosted(post.date_posted)}
             </div>
             <h2><Link className="article-title" to={`/post/${post.id}`}>{post.title}</Link></h2>
