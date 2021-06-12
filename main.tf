@@ -111,7 +111,7 @@ resource "aws_eip" "one" {
   depends_on = [aws_internet_gateway.zennit-gw]
 }
 // ec2 instances
-resource "aws_instance" "zennit_test" {
+resource "aws_instance" "Zennit_terraform1" {
   ami           = "ami-0d382e80be7ffdae5"
   instance_type = "t2.micro"
   availability_zone = "us-west-1c"
