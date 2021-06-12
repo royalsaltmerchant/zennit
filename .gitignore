@@ -3,3 +3,5 @@ __pycache__
 .vscode
 .flaskenv
 site.db
+aws-zennit-key1.pem
+.terraform/
