@@ -131,7 +131,7 @@ resource "aws_instance" "Zennit_terraform1" {
     private_key = file("./aws-zennit-key1.pem")
   }
   provisioner "file" {
-    source      = "./"
+    source      = "./commands"
     destination = "~/zennit"
   }
   provisioner "remote-exec" {
