@@ -4,11 +4,11 @@ services:
   zennit:
     build:
       context: ./
-    expose:
-      - 5000
+      dockerfile: Dockerfile
     ports:
-      - 5000:5000
+      - "80:80"
     environment: 
       - FLASK_ENV=development
       - FLASK_APP=run.py
       - FLASK_DEBUG=1
+    env_file: .flaskenv
