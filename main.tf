@@ -116,7 +116,7 @@ resource "aws_instance" "Zennit_terraform1" {
   instance_type = "t2.micro"
   availability_zone = "us-west-1c"
   tags = {
-    Name = "zennit-1"
+    Name = "zennit-terraform1"
   }
   key_name = "aws-zennit-key1"
 
@@ -136,7 +136,7 @@ resource "aws_instance" "Zennit_terraform1" {
   }
   provisioner "remote-exec" {
     inline = [
-      "sh ~/zennit/commands/init_script.sh",
+      "sh ~/zennit/init_script.sh",
     ]
   }
 }
