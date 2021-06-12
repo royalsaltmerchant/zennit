@@ -6,4 +6,6 @@ ADD . .
 
 RUN pip3 install -r requirements.txt
 
-CMD ["flask", "run", "--host", "0.0.0.0"]
+EXPOSE 80
+
+CMD ["gunicorn", "-b", "0.0.0.0:80", "run:app"]
