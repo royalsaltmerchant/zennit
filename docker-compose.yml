@@ -5,6 +5,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    image: royalsaltmerchant/zennit:latest
     ports:
       - "80:80"
     environment: 

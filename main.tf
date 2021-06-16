@@ -1,8 +1,8 @@
 // provider
 provider "aws" {
   region = "us-west-1"
-  access_key = "AKIAU5VKS6UWFXBOL5E4"
-  secret_key = "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"
+  access_key = ""
+  secret_key = ""
 }
 // vpc
 resource "aws_vpc" "zennit-vpc" {
